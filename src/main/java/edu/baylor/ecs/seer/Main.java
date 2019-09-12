@@ -8,12 +8,12 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // TODO: Args or API
-        String folderPath = "";
-        String orgPath = "";
+        String folderPath = "C:\\Users\\das\\Downloads\\RESTfulExample\\target";
+        String orgPath = "com/mkyong";
 
-        // TODO: fix it
-        RestDiscoveryService discoveryService = new RestDiscoveryService(null, null);
+        System.out.println("Started");
 
+        RestDiscoveryService discoveryService = new RestDiscoveryService();
         List<SeerRestContext> seerRestContexts = discoveryService.generateSeerRestContexts(folderPath, orgPath);
 
         System.out.println(seerRestContexts); // TODO: API response

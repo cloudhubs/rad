@@ -5,6 +5,7 @@ import edu.baylor.ecs.seer.entity.RestEndpoint;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.LocalVariableAttribute;
 import javassist.bytecode.annotation.Annotation;
 
 import java.util.ArrayList;
@@ -32,7 +33,8 @@ public class SeerRestContextService {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
             for (Annotation annotation : annotations) {
                 if (annotation.getTypeName().equals("javax.ws.rs.Path")) {
-                    path = annotation.getMemberValue("").toString(); // TODO: test it
+                    path = annotation.getMemberValue("value").toString();
+                    System.out.println("path-class " + path);
                 }
             }
         }
@@ -52,9 +54,15 @@ public class SeerRestContextService {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
             for (Annotation annotation : annotations) {
                 if (annotation.getTypeName().equals("javax.ws.rs.Path")) {
-                    String path = annotation.getMemberValue("").toString(); // TODO: test it
+                    String path = annotation.getMemberValue("value").toString();
+                    System.out.println("path " + path);
                 }
             }
+        }
+
+        LocalVariableAttribute variableAttribute = (LocalVariableAttribute) ctMethod.getMethodInfo().getAttribute(LocalVariableAttribute.tag);
+        if (variableAttribute != null) {
+            System.out.println(variableAttribute.nameIndex(0));
         }
 
         return restEndpoint;
