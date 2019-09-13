@@ -16,8 +16,9 @@ public class JaxRsAnalyzer {
     public List<RestEndpoint> getRestEndpoint(String resourcePath, CtClass ctClass) {
         List<RestEndpoint> restEndpoints = new ArrayList<>();
 
-        // get path annotation specified in class level
-        String path = "";
+        // get annotation specified in class level
+        String path = null;
+
         AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
         if (annotationsAttribute != null) {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
@@ -32,7 +33,13 @@ public class JaxRsAnalyzer {
             RestEndpoint restEndpoint = analyseMethod(ctMethod);
             if (restEndpoint != null) {
                 // append class level path
-                restEndpoint.setPath(mergePaths(path, restEndpoint.getPath()));
+                if (path != null) {
+                    if (restEndpoint.getPath() == null) {
+                        restEndpoint.setPath(path);
+                    } else {
+                        restEndpoint.setPath(Helper.mergePaths(path, restEndpoint.getPath()));
+                    }
+                }
 
                 // add resource, class and method signatures
                 restEndpoint.setResourcePath(resourcePath);
@@ -70,7 +77,6 @@ public class JaxRsAnalyzer {
                 } else { // not JAX-RS annotation
                     isRestAnnotation = false;
                 }
-                // TODO: include all HTTP methods and use annotationToHttpMethod()
 
                 // true if at least one JAX-RS annotation found
                 isRestHandlerMethod = isRestHandlerMethod || isRestAnnotation;
@@ -123,31 +129,6 @@ public class JaxRsAnalyzer {
         }
 
         return restEndpoint;
-    }
-
-    private String mergePaths(String classPath, String methodPath) {
-        // remove quotations and add slash
-        classPath = addSlash(removeQuotations(classPath));
-        methodPath = addSlash(removeQuotations(methodPath));
-
-        // merge, remove double slash and add quotations
-        return addQuotations(removeMultipleSlashes(classPath + methodPath));
-    }
-
-    private String removeQuotations(String str) {
-        return str.replaceAll("\"", "");
-    }
-
-    private String addQuotations(String str) {
-        return "\"" + str + "\"";
-    }
-
-    private String addSlash(String str) {
-        return "/" + str;
-    }
-
-    private String removeMultipleSlashes(String str) {
-        return str.replaceAll("[/]+", "/");
     }
 
     private HttpMethod annotationToHttpMethod(String annotation) {

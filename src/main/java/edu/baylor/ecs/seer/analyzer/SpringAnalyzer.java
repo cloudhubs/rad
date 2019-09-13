@@ -56,7 +56,7 @@ public class SpringAnalyzer {
                     if (restEndpoint.getPath() == null) {
                         restEndpoint.setPath(path);
                     } else {
-                        restEndpoint.setPath(mergePaths(path, restEndpoint.getPath()));
+                        restEndpoint.setPath(Helper.mergePaths(path, restEndpoint.getPath()));
                     }
                 }
 
@@ -186,31 +186,6 @@ public class SpringAnalyzer {
         }
 
         return restEndpoint;
-    }
-
-    private String mergePaths(String classPath, String methodPath) {
-        // remove quotations and add slash
-        classPath = addSlash(removeQuotations(classPath));
-        methodPath = addSlash(removeQuotations(methodPath));
-
-        // merge, remove double slash and add quotations
-        return addQuotations(removeMultipleSlashes(classPath + methodPath));
-    }
-
-    private String removeQuotations(String str) {
-        return str.replaceAll("\"", "");
-    }
-
-    private String addQuotations(String str) {
-        return "\"" + str + "\"";
-    }
-
-    private String addSlash(String str) {
-        return "/" + str;
-    }
-
-    private String removeMultipleSlashes(String str) {
-        return str.replaceAll("[/]+", "/");
     }
 
     private HttpMethod annotationToHttpMethod(String annotation) {
