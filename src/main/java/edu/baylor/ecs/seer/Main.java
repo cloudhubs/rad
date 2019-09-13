@@ -11,11 +11,12 @@ public class Main {
         String folderPath = "C:\\Users\\das\\Downloads\\RESTfulExample\\target";
         String orgPath = "com/mkyong";
 
-        System.out.println("Started");
+        System.out.println("Started"); // TODO: remove
 
         RestDiscoveryService discoveryService = new RestDiscoveryService();
         List<SeerRestContext> seerRestContexts = discoveryService.generateSeerRestContexts(folderPath, orgPath);
 
         System.out.println(seerRestContexts); // TODO: API response
+        System.out.println("done"); // TODO: remove
     }
 }
