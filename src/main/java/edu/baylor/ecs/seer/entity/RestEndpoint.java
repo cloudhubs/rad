@@ -11,6 +11,10 @@ import java.util.List;
 @Setter
 @ToString
 public class RestEndpoint {
+    private String resourcePath;
+    private String className;
+    private String methodName;
+
     private String path;
     private List<Param> pathParams;
     private List<Param> formParams;

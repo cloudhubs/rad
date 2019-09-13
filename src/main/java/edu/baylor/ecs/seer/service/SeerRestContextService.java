@@ -14,18 +14,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SeerRestContextService {
-    public SeerRestContext getSeerRestContext(List<CtClass> allClasses) {
+    public SeerRestContext getSeerRestContext(String resourcePath, List<CtClass> allClasses) {
         SeerRestContext restContext = new SeerRestContext();
 
         // TODO: analysis
         for (CtClass ctClass : allClasses) {
-            restContext.getRestEndpoints().addAll(analyseClass(ctClass));
+            restContext.getRestEndpoints().addAll(analyseClass(resourcePath, ctClass));
         }
 
         return restContext;
     }
 
-    private List<RestEndpoint> analyseClass(CtClass ctClass) {
+    private List<RestEndpoint> analyseClass(String resourcePath, CtClass ctClass) {
         List<RestEndpoint> restEndpoints = new ArrayList<>();
 
         // get path annotation specified in class level
@@ -43,7 +43,14 @@ public class SeerRestContextService {
         for (CtMethod ctMethod : ctClass.getMethods()) {
             RestEndpoint restEndpoint = analyseMethod(ctMethod);
             if (restEndpoint != null) {
-                restEndpoint.setPath(mergePaths(path, restEndpoint.getPath())); // append class level path
+                // append class level path
+                restEndpoint.setPath(mergePaths(path, restEndpoint.getPath()));
+
+                // add resource, class and method signatures
+                restEndpoint.setResourcePath(resourcePath);
+                restEndpoint.setClassName(ctClass.getName());
+                restEndpoint.setMethodName(ctMethod.getName());
+
                 restEndpoints.add(restEndpoint);
             }
         }

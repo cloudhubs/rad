@@ -23,7 +23,7 @@ public class RestDiscoveryService {
         List<String> resourcePaths = resourceService.getResourcePaths(folderPath);
         for (String path : resourcePaths) {
             List<CtClass> ctClasses = resourceService.getCtClasses(path, organizationPath);
-            seerRestContexts.add(restContextService.getSeerRestContext(ctClasses));
+            seerRestContexts.add(restContextService.getSeerRestContext(path, ctClasses));
         }
 
         return seerRestContexts;
