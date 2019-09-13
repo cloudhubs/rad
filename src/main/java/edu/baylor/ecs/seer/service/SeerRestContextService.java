@@ -17,8 +17,8 @@ public class SeerRestContextService {
     public SeerRestContext getSeerRestContext(String resourcePath, List<CtClass> allClasses) {
         SeerRestContext restContext = new SeerRestContext();
 
-        // TODO: analysis
         for (CtClass ctClass : allClasses) {
+            // System.out.println("ClassName: " + ctClass.getName()); // TODO: log
             restContext.getRestEndpoints().addAll(analyseClass(resourcePath, ctClass));
         }
 
@@ -51,6 +51,7 @@ public class SeerRestContextService {
                 restEndpoint.setClassName(ctClass.getName());
                 restEndpoint.setMethodName(ctMethod.getName());
 
+                System.out.println(restEndpoint); // TODO: log
                 restEndpoints.add(restEndpoint);
             }
         }
@@ -142,7 +143,7 @@ public class SeerRestContextService {
         methodPath = addSlash(removeQuotations(methodPath));
 
         // merge, remove double slash and add quotations
-        return addQuotations(removeDoubleSlash(classPath + methodPath));
+        return addQuotations(removeMultipleSlashes(classPath + methodPath));
     }
 
     private String removeQuotations(String str) {
@@ -157,7 +158,7 @@ public class SeerRestContextService {
         return "/" + str;
     }
 
-    private String removeDoubleSlash(String str) {
-        return str.replaceAll("//", "/");
+    private String removeMultipleSlashes(String str) {
+        return str.replaceAll("[/]+", "/");
     }
 }
