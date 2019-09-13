@@ -8,8 +8,8 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
         // TODO: Args or API
-        String folderPath = "C:\\seer-lab\\cm5";
-        String orgPath = "edu/baylor/icpc";
+        String folderPath = "C:\\seer-lab\\cil-tms";
+        String orgPath = "edu/baylor/ecs";
 
         System.out.println("Started"); // TODO: remove
 

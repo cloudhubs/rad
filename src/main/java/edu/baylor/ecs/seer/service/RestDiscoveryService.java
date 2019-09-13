@@ -22,9 +22,8 @@ public class RestDiscoveryService {
 
         List<String> resourcePaths = resourceService.getResourcePaths(folderPath);
         for (String path : resourcePaths) {
-            // System.out.println("Resource Path: " + path); // TODO: log
+            System.out.println("=== Resource Path: " + path); // TODO: log
             List<CtClass> ctClasses = resourceService.getCtClasses(path, organizationPath);
-            // System.out.println("Analysing ctClasses ..."); // TODO: log
             seerRestContexts.add(restContextService.getSeerRestContext(path, ctClasses));
         }
 
