@@ -56,18 +56,17 @@ public class JaxRsAnalyzer {
         if (annotationsAttribute != null) {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
             for (Annotation annotation : annotations) {
+                String annotationType = annotation.getTypeName();
                 boolean isRestAnnotation = true;
 
-                if (annotation.getTypeName().equals("javax.ws.rs.Path")) { // TODO: use constant
+                if (annotationType.equals("javax.ws.rs.Path")) { // TODO: use constant
                     restEndpoint.setPath(annotation.getMemberValue("value").toString());
-                } else if (annotation.getTypeName().equals("javax.ws.rs.Produces")) { // TODO: use constant
+                } else if (annotationType.equals("javax.ws.rs.Produces")) { // TODO: use constant
                     restEndpoint.setProduceType(annotation.getMemberValue("value").toString());
-                } else if (annotation.getTypeName().equals("javax.ws.rs.Consumes")) { // TODO: use constant
+                } else if (annotationType.equals("javax.ws.rs.Consumes")) { // TODO: use constant
                     restEndpoint.setConsumeType(annotation.getMemberValue("value").toString());
-                } else if (annotation.getTypeName().equals("javax.ws.rs.Get")) { // TODO: use constant
+                } else if (annotationToHttpMethod(annotationType) != null) { // TODO: use constant
                     restEndpoint.setHttpMethod(HttpMethod.GET);
-                } else if (annotation.getTypeName().equals("javax.ws.rs.Post")) { // TODO: use constant
-                    restEndpoint.setHttpMethod(HttpMethod.POST);
                 } else { // not JAX-RS annotation
                     isRestAnnotation = false;
                 }
@@ -94,13 +93,15 @@ public class JaxRsAnalyzer {
                 Param pathParam = null, queryParam = null, formParam = null;
 
                 for (Annotation annotation : annotations) {
-                    if (annotation.getTypeName().equals("javax.ws.rs.PathParam")) { // TODO: use constant
+                    String annotationType = annotation.getTypeName();
+
+                    if (annotationType.equals("javax.ws.rs.PathParam")) { // TODO: use constant
                         pathParam = new Param(annotation.getMemberValue("value").toString());
-                    } else if (annotation.getTypeName().equals("javax.ws.rs.QueryParam")) { // TODO: use constant
+                    } else if (annotationType.equals("javax.ws.rs.QueryParam")) { // TODO: use constant
                         queryParam = new Param(annotation.getMemberValue("value").toString());
-                    } else if (annotation.getTypeName().equals("javax.ws.rs.FormParam")) { // TODO: use constant
+                    } else if (annotationType.equals("javax.ws.rs.FormParam")) { // TODO: use constant
                         formParam = new Param(annotation.getMemberValue("value").toString());
-                    } else if (annotation.getTypeName().equals("javax.ws.rs.DefaultValue")) { // TODO: use constant
+                    } else if (annotationType.equals("javax.ws.rs.DefaultValue")) { // TODO: use constant
                         defaultValue = annotation.getMemberValue("value").toString();
                     }
                 }
@@ -147,5 +148,25 @@ public class JaxRsAnalyzer {
 
     private String removeMultipleSlashes(String str) {
         return str.replaceAll("[/]+", "/");
+    }
+
+    private HttpMethod annotationToHttpMethod(String annotation) {
+        if (annotation.equals("javax.ws.rs.GET")) { // TODO: use constant
+            return HttpMethod.GET;
+        } else if (annotation.equals("javax.ws.rs.POST")) { // TODO: use constant
+            return HttpMethod.POST;
+        } else if (annotation.equals("javax.ws.rs.PUT")) { // TODO: use constant
+            return HttpMethod.PUT;
+        } else if (annotation.equals("javax.ws.rs.DELETE")) { // TODO: use constant
+            return HttpMethod.DELETE;
+        } else if (annotation.equals("javax.ws.rs.OPTIONS")) { // TODO: use constant
+            return HttpMethod.OPTIONS;
+        } else if (annotation.equals("javax.ws.rs.HEAD")) { // TODO: use constant
+            return HttpMethod.HEAD;
+        } else if (annotation.equals("javax.ws.rs.PATCH")) { // TODO: use constant
+            return HttpMethod.PATCH;
+        } else {
+            return null;
+        }
     }
 }
