@@ -2,60 +2,75 @@ package edu.baylor.ecs.seer.analyzer;
 
 import edu.baylor.ecs.seer.entity.HttpMethod;
 import edu.baylor.ecs.seer.entity.Param;
-import edu.baylor.ecs.seer.entity.RestEndpoint;
+import edu.baylor.ecs.seer.entity.RestEntity;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class JaxRsAnalyzer {
-    public List<RestEndpoint> getRestEndpoint(String resourcePath, CtClass ctClass) {
-        List<RestEndpoint> restEndpoints = new ArrayList<>();
+    static final String jaxRsAnnotationPrefix = "javax.ws.rs";
+    static final String mpRegisterControllerAnnotation = "org.eclipse.microprofile.rest.client.inject.RegisterRestClient";
+
+    public List<RestEntity> getRestEntity(CtClass ctClass) {
+        List<RestEntity> restEntities = new ArrayList<>();
 
         // get annotation specified in class level
         String path = null;
+        boolean isClient = false;
 
         AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
         if (annotationsAttribute != null) {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
             for (Annotation annotation : annotations) {
-                if (annotation.getTypeName().equals("javax.ws.rs.Path")) { // TODO: use constant
-                    path = annotation.getMemberValue("value").toString();
+                if (annotation.getTypeName().equals(mpRegisterControllerAnnotation)) {
+                    isClient = true;
+                } else if (annotation.getTypeName().equals(getJaxRsAnnotation("Path"))) {
+                    path = Helper.getAnnotationValue(annotation, "value");
                 }
             }
         }
 
         for (CtMethod ctMethod : ctClass.getMethods()) {
-            RestEndpoint restEndpoint = analyseMethod(ctMethod);
-            if (restEndpoint != null) {
+            RestEntity restEntity = analyseMethod(ctMethod);
+            if (restEntity != null) {
                 // append class level path
                 if (path != null) {
-                    if (restEndpoint.getPath() == null) {
-                        restEndpoint.setPath(path);
+                    if (restEntity.getPath() == null) {
+                        restEntity.setPath(path);
                     } else {
-                        restEndpoint.setPath(Helper.mergePaths(path, restEndpoint.getPath()));
+                        restEntity.setPath(Helper.mergePaths(path, restEntity.getPath()));
                     }
                 }
 
-                // add resource, class and method signatures
-                restEndpoint.setResourcePath(resourcePath);
-                restEndpoint.setClassName(ctClass.getName());
-                restEndpoint.setMethodName(ctMethod.getName());
+                // add class and method signatures
+                restEntity.setClient(isClient);
+                restEntity.setClassName(ctClass.getName());
+                restEntity.setMethodName(ctMethod.getName());
+                if (!isClient) {  // add return type
+                    try {
+                        restEntity.setReturnType(ctMethod.getReturnType().getName());
+                    } catch (NotFoundException e) {
+                        restEntity.setReturnType(null);
+                    }
+                }
 
-                System.out.println(restEndpoint); // TODO: log
-                restEndpoints.add(restEndpoint);
+                restEntities.add(restEntity);
             }
         }
 
-        return restEndpoints;
+        return restEntities;
     }
 
-    private RestEndpoint analyseMethod(CtMethod ctMethod) {
-        RestEndpoint restEndpoint = new RestEndpoint();
+    private RestEntity analyseMethod(CtMethod ctMethod) {
+        RestEntity restEntity = new RestEntity();
 
         boolean isRestHandlerMethod = false;
 
@@ -66,14 +81,14 @@ public class JaxRsAnalyzer {
                 String annotationType = annotation.getTypeName();
                 boolean isRestAnnotation = true;
 
-                if (annotationType.equals("javax.ws.rs.Path")) { // TODO: use constant
-                    restEndpoint.setPath(annotation.getMemberValue("value").toString());
-                } else if (annotationType.equals("javax.ws.rs.Produces")) { // TODO: use constant
-                    restEndpoint.setProduceType(annotation.getMemberValue("value").toString());
-                } else if (annotationType.equals("javax.ws.rs.Consumes")) { // TODO: use constant
-                    restEndpoint.setConsumeType(annotation.getMemberValue("value").toString());
-                } else if (annotationToHttpMethod(annotationType) != null) { // TODO: use constant
-                    restEndpoint.setHttpMethod(HttpMethod.GET);
+                if (annotationType.equals(getJaxRsAnnotation("Path"))) {
+                    restEntity.setPath(Helper.getAnnotationValue(annotation, "value"));
+                } else if (annotationType.equals(getJaxRsAnnotation("Produces"))) {
+                    restEntity.setProduceType(Helper.getAnnotationValue(annotation, "value"));
+                } else if (annotationType.equals(getJaxRsAnnotation("Consumes"))) {
+                    restEntity.setConsumeType(Helper.getAnnotationValue(annotation, "value"));
+                } else if (annotationToHttpMethod(annotationType) != null) {
+                    restEntity.setHttpMethod(annotationToHttpMethod(annotationType));
                 } else { // not JAX-RS annotation
                     isRestAnnotation = false;
                 }
@@ -101,53 +116,57 @@ public class JaxRsAnalyzer {
                 for (Annotation annotation : annotations) {
                     String annotationType = annotation.getTypeName();
 
-                    if (annotationType.equals("javax.ws.rs.PathParam")) { // TODO: use constant
-                        pathParam = new Param(annotation.getMemberValue("value").toString());
-                    } else if (annotationType.equals("javax.ws.rs.QueryParam")) { // TODO: use constant
-                        queryParam = new Param(annotation.getMemberValue("value").toString());
-                    } else if (annotationType.equals("javax.ws.rs.FormParam")) { // TODO: use constant
-                        formParam = new Param(annotation.getMemberValue("value").toString());
-                    } else if (annotationType.equals("javax.ws.rs.DefaultValue")) { // TODO: use constant
-                        defaultValue = annotation.getMemberValue("value").toString();
+                    if (annotationType.equals(getJaxRsAnnotation("PathParam"))) {
+                        pathParam = new Param(Helper.getAnnotationValue(annotation, "value"));
+                    } else if (annotationType.equals(getJaxRsAnnotation("QueryParam"))) {
+                        queryParam = new Param(Helper.getAnnotationValue(annotation, "value"));
+                    } else if (annotationType.equals(getJaxRsAnnotation("FormParam"))) {
+                        formParam = new Param(Helper.getAnnotationValue(annotation, "value"));
+                    } else if (annotationType.equals(getJaxRsAnnotation("DefaultValue"))) {
+                        defaultValue = Helper.getAnnotationValue(annotation, "value");
                     }
                 }
 
                 if (pathParam != null) {
                     pathParam.setDefaultValue(defaultValue);
-                    restEndpoint.addPathParam(pathParam);
+                    restEntity.addPathParam(pathParam);
                 }
                 if (queryParam != null) {
                     queryParam.setDefaultValue(defaultValue);
-                    restEndpoint.addQueryParam(queryParam);
+                    restEntity.addQueryParam(queryParam);
                 }
                 if (formParam != null) {
                     formParam.setDefaultValue(defaultValue);
-                    restEndpoint.addFormParam(formParam);
+                    restEntity.addFormParam(formParam);
                 }
                 // TODO: headerParam, cookieParam, matrixParam
             }
         }
 
-        return restEndpoint;
+        return restEntity;
     }
 
     private HttpMethod annotationToHttpMethod(String annotation) {
-        if (annotation.equals("javax.ws.rs.GET")) { // TODO: use constant
+        if (annotation.equals(getJaxRsAnnotation("GET"))) {
             return HttpMethod.GET;
-        } else if (annotation.equals("javax.ws.rs.POST")) { // TODO: use constant
+        } else if (annotation.equals(getJaxRsAnnotation("POST"))) {
             return HttpMethod.POST;
-        } else if (annotation.equals("javax.ws.rs.PUT")) { // TODO: use constant
+        } else if (annotation.equals(getJaxRsAnnotation("PUT"))) {
             return HttpMethod.PUT;
-        } else if (annotation.equals("javax.ws.rs.DELETE")) { // TODO: use constant
+        } else if (annotation.equals(getJaxRsAnnotation("DELETE"))) {
             return HttpMethod.DELETE;
-        } else if (annotation.equals("javax.ws.rs.OPTIONS")) { // TODO: use constant
+        } else if (annotation.equals(getJaxRsAnnotation("OPTIONS"))) {
             return HttpMethod.OPTIONS;
-        } else if (annotation.equals("javax.ws.rs.HEAD")) { // TODO: use constant
+        } else if (annotation.equals(getJaxRsAnnotation("HEAD"))) {
             return HttpMethod.HEAD;
-        } else if (annotation.equals("javax.ws.rs.PATCH")) { // TODO: use constant
+        } else if (annotation.equals(getJaxRsAnnotation("PATCH"))) {
             return HttpMethod.PATCH;
         } else {
             return null;
         }
+    }
+
+    public String getJaxRsAnnotation(String suffix) {
+        return jaxRsAnnotationPrefix + "." + suffix;
     }
 }

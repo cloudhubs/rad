@@ -2,22 +2,26 @@ package edu.baylor.ecs.seer.analyzer;
 
 import edu.baylor.ecs.seer.entity.HttpMethod;
 import edu.baylor.ecs.seer.entity.Param;
-import edu.baylor.ecs.seer.entity.RestEndpoint;
+import edu.baylor.ecs.seer.entity.RestEntity;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class SpringAnalyzer {
-    public List<RestEndpoint> getRestEndpoint(String resourcePath, CtClass ctClass) {
-        List<RestEndpoint> restEndpoints = new ArrayList<>();
+    static final String springAnnotationPrefix = "org.springframework.web.bind.annotation";
+
+    public List<RestEntity> getRestEntity(CtClass ctClass) {
+        List<RestEntity> restEntities = new ArrayList<>();
 
         if (!isController(ctClass)) { // not a controller, don't do further analysis
-            return restEndpoints;
+            return restEntities;
         }
 
         // get annotation specified in class level
@@ -28,60 +32,58 @@ public class SpringAnalyzer {
         if (annotationsAttribute != null) {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
             for (Annotation annotation : annotations) {
-                if (annotation.getTypeName().equals("org.springframework.web.bind.annotation.RequestMapping")) { // TODO: use constant
-                    if (annotation.getMemberValue("value") != null) {
-                        path = annotation.getMemberValue("value").toString();
+                if (annotation.getTypeName().equals(getSpringAnnotation("RequestMapping"))) {
+                    if (Helper.getAnnotationValue(annotation, "value") != null) {
+                        path = Helper.getAnnotationValue(annotation, "value");
                     }
-                    if (annotation.getMemberValue("path") != null) { // path is alias for value
-                        path = annotation.getMemberValue("path").toString();
+                    if (Helper.getAnnotationValue(annotation, "path") != null) { // path is alias for value
+                        path = Helper.getAnnotationValue(annotation, "path");
                     }
-                    if (annotation.getMemberValue("method") != null) { // path is alias for value
-                        method = annotationToHttpMethod(annotation.getMemberValue("method").toString());
+                    if (Helper.getAnnotationValue(annotation, "method") != null) {
+                        method = annotationToHttpMethod(Helper.getAnnotationValue(annotation, "method"));
                     }
-                    if (annotation.getMemberValue("produces") != null) { // path is alias for value
-                        produces = annotation.getMemberValue("produces").toString();
+                    if (Helper.getAnnotationValue(annotation, "produces") != null) {
+                        produces = Helper.getAnnotationValue(annotation, "produces");
                     }
-                    if (annotation.getMemberValue("consumes") != null) { // path is alias for value
-                        consumes = annotation.getMemberValue("consumes").toString();
+                    if (Helper.getAnnotationValue(annotation, "consumes") != null) {
+                        consumes = Helper.getAnnotationValue(annotation, "consumes");
                     }
                 }
             }
         }
 
         for (CtMethod ctMethod : ctClass.getMethods()) {
-            RestEndpoint restEndpoint = analyseMethod(ctMethod);
-            if (restEndpoint != null) {
+            RestEntity RestEntity = analyseMethod(ctMethod);
+            if (RestEntity != null) {
                 // append class level path
                 if (path != null) {
-                    if (restEndpoint.getPath() == null) {
-                        restEndpoint.setPath(path);
+                    if (RestEntity.getPath() == null) {
+                        RestEntity.setPath(path);
                     } else {
-                        restEndpoint.setPath(Helper.mergePaths(path, restEndpoint.getPath()));
+                        RestEntity.setPath(Helper.mergePaths(path, RestEntity.getPath()));
                     }
                 }
 
                 // use class level properties if not specified in method level
-                if (restEndpoint.getHttpMethod() == null) {
-                    restEndpoint.setHttpMethod(method);
+                if (RestEntity.getHttpMethod() == null) {
+                    RestEntity.setHttpMethod(method);
                 }
-                if (restEndpoint.getProduceType() == null) {
-                    restEndpoint.setProduceType(produces);
+                if (RestEntity.getProduceType() == null) {
+                    RestEntity.setProduceType(produces);
                 }
-                if (restEndpoint.getConsumeType() == null) {
-                    restEndpoint.setConsumeType(consumes);
+                if (RestEntity.getConsumeType() == null) {
+                    RestEntity.setConsumeType(consumes);
                 }
 
-                // add resource, class and method signatures
-                restEndpoint.setResourcePath(resourcePath);
-                restEndpoint.setClassName(ctClass.getName());
-                restEndpoint.setMethodName(ctMethod.getName());
+                // add class and method signatures
+                RestEntity.setClassName(ctClass.getName());
+                RestEntity.setMethodName(ctMethod.getName());
 
-                System.out.println(restEndpoint); // TODO: log
-                restEndpoints.add(restEndpoint);
+                restEntities.add(RestEntity);
             }
         }
 
-        return restEndpoints;
+        return restEntities;
     }
 
     private boolean isController(CtClass ctClass) {
@@ -90,7 +92,7 @@ public class SpringAnalyzer {
             Annotation[] annotations = annotationsAttribute.getAnnotations();
             for (Annotation annotation : annotations) {
                 if (annotation.getTypeName().equals("org.springframework.stereotype.Controller") ||
-                        annotation.getTypeName().equals("org.springframework.web.bind.annotation.RestController")) { // TODO: use constant
+                        annotation.getTypeName().equals(getSpringAnnotation("RestController"))) {
                     return true;
                 }
             }
@@ -98,8 +100,8 @@ public class SpringAnalyzer {
         return false;
     }
 
-    private RestEndpoint analyseMethod(CtMethod ctMethod) {
-        RestEndpoint restEndpoint = new RestEndpoint();
+    private RestEntity analyseMethod(CtMethod ctMethod) {
+        RestEntity restEntity = new RestEntity();
 
         boolean isRestHandlerMethod = false;
 
@@ -110,32 +112,28 @@ public class SpringAnalyzer {
                 String annotationType = annotation.getTypeName();
                 boolean isRestAnnotation = true;
 
-                if (annotationType.equals("org.springframework.web.bind.annotation.RequestMapping")) { // TODO: use constant
-                    if (annotation.getMemberValue("value") != null) {
-                        restEndpoint.setPath(annotation.getMemberValue("value").toString());
+                if (annotationType.equals(getSpringAnnotation("RequestMapping"))) {
+                    if (Helper.getAnnotationValue(annotation, "value") != null) {
+                        restEntity.setPath(Helper.getAnnotationValue(annotation, "value"));
                     }
-                    if (annotation.getMemberValue("path") != null) { // path is alias for value
-                        restEndpoint.setPath(annotation.getMemberValue("path").toString());
+                    if (Helper.getAnnotationValue(annotation, "path") != null) { // path is alias for value
+                        restEntity.setPath(Helper.getAnnotationValue(annotation, "path"));
                     }
-                    if (annotation.getMemberValue("method") != null) { // path is alias for value
-                        restEndpoint.setHttpMethod(annotationToHttpMethod(annotation.getMemberValue("method").toString()));
+                    if (Helper.getAnnotationValue(annotation, "method") != null) {
+                        restEntity.setHttpMethod(annotationToHttpMethod(Helper.getAnnotationValue(annotation, "method")));
                     }
-                    if (annotation.getMemberValue("produces") != null) { // path is alias for value
-                        restEndpoint.setProduceType(annotation.getMemberValue("produces").toString());
+                    if (Helper.getAnnotationValue(annotation, "produces") != null) {
+                        restEntity.setProduceType(Helper.getAnnotationValue(annotation, "produces"));
                     }
-                    if (annotation.getMemberValue("consumes") != null) { // path is alias for value
-                        restEndpoint.setConsumeType(annotation.getMemberValue("consumes").toString());
+                    if (Helper.getAnnotationValue(annotation, "consumes") != null) {
+                        restEntity.setConsumeType(Helper.getAnnotationValue(annotation, "consumes"));
                     }
-                } else if (annotationType.equals("org.springframework.web.bind.annotation.GetMapping")) {
-                    restEndpoint.setPath(annotation.getMemberValue("value").toString());
-                    restEndpoint.setHttpMethod(HttpMethod.GET);
-                } else if (annotationType.equals("org.springframework.web.bind.annotation.PostMapping")) {
-                    restEndpoint.setPath(annotation.getMemberValue("value").toString());
-                    restEndpoint.setHttpMethod(HttpMethod.POST);
+                } else if (annotationToHttpMethodMapping(annotationType) != null) {
+                    restEntity.setPath(Helper.getAnnotationValue(annotation, "value"));
+                    restEntity.setHttpMethod(annotationToHttpMethodMapping(annotationType));
                 } else {
                     isRestAnnotation = false;
                 }
-                // TODO: add other http methods
 
                 // true if at least one JAX-RS annotation found
                 isRestHandlerMethod = isRestHandlerMethod || isRestAnnotation;
@@ -157,16 +155,16 @@ public class SpringAnalyzer {
                 for (Annotation annotation : annotations) {
                     String annotationType = annotation.getTypeName();
 
-                    if (annotationType.equals("org.springframework.web.bind.annotation.PathVariable")) { // TODO: use constant
-                        if (annotation.getMemberValue("value") != null) {
-                            pathParam = new Param(annotation.getMemberValue("value").toString());
+                    if (annotationType.equals(getSpringAnnotation("PathVariable"))) {
+                        if (Helper.getAnnotationValue(annotation, "value") != null) {
+                            pathParam = new Param(Helper.getAnnotationValue(annotation, "value"));
                         } else {
                             pathParam = new Param("VARIABLE_NAME"); // TODO: get variable name
                         }
 
-                    } else if (annotationType.equals("org.springframework.web.bind.annotation.RequestParam")) { // TODO: use constant
-                        if (annotation.getMemberValue("value") != null) {
-                            queryParam = new Param(annotation.getMemberValue("value").toString());
+                    } else if (annotationType.equals(getSpringAnnotation("RequestParam"))) {
+                        if (Helper.getAnnotationValue(annotation, "value") != null) {
+                            queryParam = new Param(Helper.getAnnotationValue(annotation, "value"));
                         } else {
                             queryParam = new Param("VARIABLE_NAME"); // TODO: get variable name
                         }
@@ -175,36 +173,61 @@ public class SpringAnalyzer {
 
                 if (pathParam != null) {
                     pathParam.setDefaultValue(defaultValue);
-                    restEndpoint.addPathParam(pathParam);
+                    restEntity.addPathParam(pathParam);
                 }
                 if (queryParam != null) {
                     queryParam.setDefaultValue(defaultValue);
-                    restEndpoint.addQueryParam(queryParam);
+                    restEntity.addQueryParam(queryParam);
                 }
                 // TODO: formParam, headerParam, cookieParam, matrixParam
             }
         }
 
-        return restEndpoint;
+        return restEntity;
     }
 
     private HttpMethod annotationToHttpMethod(String annotation) {
-        if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.GET")) { // TODO: use constant
+        // annotation = annotation.replaceAll("[{}]", "");
+        if (annotation.equals(getSpringAnnotation("RequestMethod.GET"))) {
             return HttpMethod.GET;
-        } else if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.POST")) { // TODO: use constant
+        } else if (annotation.equals(getSpringAnnotation("RequestMethod.POST"))) {
             return HttpMethod.POST;
-        } else if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.PUT")) { // TODO: use constant
+        } else if (annotation.equals(getSpringAnnotation("RequestMethod.PUT"))) {
             return HttpMethod.PUT;
-        } else if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.DELETE")) { // TODO: use constant
+        } else if (annotation.equals(getSpringAnnotation("RequestMethod.DELETE"))) {
             return HttpMethod.DELETE;
-        } else if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.OPTIONS")) { // TODO: use constant
+        } else if (annotation.equals(getSpringAnnotation("RequestMethod.OPTIONS"))) {
             return HttpMethod.OPTIONS;
-        } else if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.HEAD")) { // TODO: use constant
+        } else if (annotation.equals(getSpringAnnotation("RequestMethod.HEAD"))) {
             return HttpMethod.HEAD;
-        } else if (annotation.equals("org.springframework.web.bind.annotation.RequestMethod.PATCH")) { // TODO: use constant
+        } else if (annotation.equals(getSpringAnnotation("RequestMethod.PATCH"))) {
             return HttpMethod.PATCH;
         } else {
             return null;
         }
+    }
+
+    private HttpMethod annotationToHttpMethodMapping(String annotation) {
+        if (annotation.equals(getSpringAnnotation("GetMapping"))) {
+            return HttpMethod.GET;
+        } else if (annotation.equals(getSpringAnnotation("PostMapping"))) {
+            return HttpMethod.POST;
+        } else if (annotation.equals(getSpringAnnotation("PutMapping"))) {
+            return HttpMethod.PUT;
+        } else if (annotation.equals(getSpringAnnotation("DeleteMapping"))) {
+            return HttpMethod.DELETE;
+        } else if (annotation.equals(getSpringAnnotation("OptionsMapping"))) {
+            return HttpMethod.OPTIONS;
+        } else if (annotation.equals(getSpringAnnotation("HeadMapping"))) {
+            return HttpMethod.HEAD;
+        } else if (annotation.equals(getSpringAnnotation("PatchMapping"))) {
+            return HttpMethod.PATCH;
+        } else {
+            return null;
+        }
+    }
+
+    private String getSpringAnnotation(String suffix) {
+        return springAnnotationPrefix + "." + suffix;
     }
 }

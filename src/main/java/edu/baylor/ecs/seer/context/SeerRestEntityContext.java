@@ -1,6 +1,6 @@
 package edu.baylor.ecs.seer.context;
 
-import edu.baylor.ecs.seer.entity.RestEndpoint;
+import edu.baylor.ecs.seer.entity.RestEntity;
 import lombok.Getter;
 import lombok.ToString;
 
@@ -9,6 +9,6 @@ import java.util.List;
 
 @Getter
 @ToString
-public class SeerRestContext {
-    private List<RestEndpoint> restEndpoints = new ArrayList<>();
+public class SeerRestEntityContext {
+    private List<RestEntity> restEntities = new ArrayList<>();
 }

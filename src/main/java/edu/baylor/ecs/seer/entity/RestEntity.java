@@ -10,10 +10,14 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class RestEndpoint {
+public class RestEntity {
+    private boolean isClient;
+    private String url;
+
     private String resourcePath;
     private String className;
     private String methodName;
+    private String returnType; // for endpoint methods
 
     private String path;
     private List<Param> pathParams;

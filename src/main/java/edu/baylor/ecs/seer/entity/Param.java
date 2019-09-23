@@ -9,7 +9,6 @@ import lombok.ToString;
 @ToString
 public class Param {
     private String name;
-    // private String type; // TODO: need to analyse local variables to get param type
     private String defaultValue;
 
     public Param(String name) {
