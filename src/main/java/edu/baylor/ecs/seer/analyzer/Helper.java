@@ -5,8 +5,12 @@ import org.apache.commons.io.FilenameUtils;
 
 public class Helper {
     public static String mergePaths(String classPath, String methodPath) {
+        if (classPath.startsWith("/")) classPath = classPath.substring(1);
+        if (methodPath.startsWith("/")) methodPath = methodPath.substring(1);
+
         String path = FilenameUtils.normalizeNoEndSeparator(FilenameUtils.concat(classPath, methodPath), true);
         if (!path.startsWith("/")) path = "/" + path;
+
         return path;
     }
 

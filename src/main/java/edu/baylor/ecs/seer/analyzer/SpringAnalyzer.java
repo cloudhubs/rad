@@ -53,33 +53,33 @@ public class SpringAnalyzer {
         }
 
         for (CtMethod ctMethod : ctClass.getMethods()) {
-            RestEntity RestEntity = analyseMethod(ctMethod);
-            if (RestEntity != null) {
+            RestEntity restEntity = analyseMethod(ctMethod);
+            if (restEntity != null) {
                 // append class level path
                 if (path != null) {
-                    if (RestEntity.getPath() == null) {
-                        RestEntity.setPath(path);
+                    if (restEntity.getPath() == null) {
+                        restEntity.setPath(path);
                     } else {
-                        RestEntity.setPath(Helper.mergePaths(path, RestEntity.getPath()));
+                        restEntity.setPath(Helper.mergePaths(path, restEntity.getPath()));
                     }
                 }
 
                 // use class level properties if not specified in method level
-                if (RestEntity.getHttpMethod() == null) {
-                    RestEntity.setHttpMethod(method);
+                if (restEntity.getHttpMethod() == null) {
+                    restEntity.setHttpMethod(method);
                 }
-                if (RestEntity.getProduceType() == null) {
-                    RestEntity.setProduceType(produces);
+                if (restEntity.getProduceType() == null) {
+                    restEntity.setProduceType(produces);
                 }
-                if (RestEntity.getConsumeType() == null) {
-                    RestEntity.setConsumeType(consumes);
+                if (restEntity.getConsumeType() == null) {
+                    restEntity.setConsumeType(consumes);
                 }
 
                 // add class and method signatures
-                RestEntity.setClassName(ctClass.getName());
-                RestEntity.setMethodName(ctMethod.getName());
+                restEntity.setClassName(ctClass.getName());
+                restEntity.setMethodName(ctMethod.getName());
 
-                restEntities.add(RestEntity);
+                restEntities.add(restEntity);
             }
         }
 

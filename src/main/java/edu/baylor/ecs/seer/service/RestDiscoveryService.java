@@ -86,7 +86,7 @@ public class RestDiscoveryService {
         }
 
         // find serverIP and port
-        String serverIP = "localhost"; //TODO
+        String serverIP = "http://localhost"; // TODO
         String serverPort = findPortFromProperties(properties);
 
         if (!restEntity.isClient()) { // set server ip and port
