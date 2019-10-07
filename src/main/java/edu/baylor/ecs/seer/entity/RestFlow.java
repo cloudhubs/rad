@@ -15,5 +15,4 @@ public class RestFlow {
     private String methodName;
 
     private List<RestEntity> servers;
-    private List<RestEntity> possibleServers;
 }

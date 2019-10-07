@@ -119,7 +119,7 @@ public class RestDiscoveryService {
         return restFlowContext;
     }
 
-    public List<RestFlow> getRestFlows(List<RestEntity> serverEntities, List<RestEntity> clientEntities) {
+    private List<RestFlow> getRestFlows(List<RestEntity> serverEntities, List<RestEntity> clientEntities) {
         List<RestFlow> restFlows = new ArrayList<>();
 
         // populate RestFlow
@@ -129,23 +129,14 @@ public class RestDiscoveryService {
                 if (restClientEntity.getHttpMethod() == restServerEntity.getHttpMethod() &&
                         Helper.matchUrl(restClientEntity.getUrl(), restServerEntity.getUrl())) {
 
-                    RestFlow restFlow = new RestFlow();
-
-                    restFlow.setResourcePath(restClientEntity.getResourcePath());
-                    restFlow.setClassName(restClientEntity.getClassName());
-                    restFlow.setMethodName(restClientEntity.getMethodName());
-
-                    if (restFlow.getServers() == null) restFlow.setServers(new ArrayList<>());
-                    restFlow.getServers().add(restServerEntity);
-
-                    restFlows.add(restFlow);
+                    createRestFlow(restFlows, restServerEntity, restClientEntity);
                 }
             }
         }
         return restFlows;
     }
 
-    public List<RestFlow> getPossibleRestFlows(List<RestEntity> serverEntities, List<RestEntity> clientEntities) {
+    private List<RestFlow> getPossibleRestFlows(List<RestEntity> serverEntities, List<RestEntity> clientEntities) {
         List<RestFlow> restFlows = new ArrayList<>();
 
         // populate RestFlow
@@ -157,20 +148,34 @@ public class RestDiscoveryService {
                         restServerEntity.getReturnType() != null &&
                         restClientEntity.getReturnType().equals(restServerEntity.getReturnType())) {
 
-                    RestFlow restFlow = new RestFlow();
-
-                    restFlow.setResourcePath(restClientEntity.getResourcePath());
-                    restFlow.setClassName(restClientEntity.getClassName());
-                    restFlow.setMethodName(restClientEntity.getMethodName());
-
-                    if (restFlow.getPossibleServers() == null) restFlow.setPossibleServers(new ArrayList<>());
-                    restFlow.getPossibleServers().add(restServerEntity);
-
-                    restFlows.add(restFlow);
+                    createRestFlow(restFlows, restServerEntity, restClientEntity);
                 }
             }
         }
 
         return restFlows;
+    }
+
+    private void createRestFlow(List<RestFlow> restFlows, RestEntity server, RestEntity client) {
+        // search if there is already an entry for this client
+        for (RestFlow restFlow : restFlows) {
+            if (restFlow.getResourcePath().equals(client.getResourcePath()) &&
+                    restFlow.getMethodName().equals(client.getMethodName())) {
+
+                restFlow.getServers().add(server);
+                return;
+            }
+        }
+
+        RestFlow restFlow = new RestFlow();
+
+        restFlow.setResourcePath(client.getResourcePath());
+        restFlow.setClassName(client.getClassName());
+        restFlow.setMethodName(client.getMethodName());
+
+        restFlow.setServers(new ArrayList<>());
+        restFlow.getServers().add(server);
+
+        restFlows.add(restFlow);
     }
 }
