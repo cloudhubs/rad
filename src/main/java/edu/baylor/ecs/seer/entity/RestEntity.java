@@ -16,6 +16,9 @@ public class RestEntity {
 
     private String url;
 
+    private String applicationName; // used in eureka discovery
+    private String ribbonServerName;
+
     private String resourcePath;
     private String className;
     private String methodName;

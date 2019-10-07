@@ -45,6 +45,9 @@ public class RestEntityService {
             restEntity.setHttpMethod(HttpMethod.GET);
         }
 
+        // find application name, used in eureka discovery
+        restEntity.setApplicationName(findApplicationNameProperties(properties));
+
         // find serverIP and port
         String serverIP = "http://localhost"; // TODO
         String serverPort = findPortFromProperties(properties);
@@ -67,5 +70,10 @@ public class RestEntityService {
             port = properties.getProperty("server.port");
         }
         return port;
+    }
+
+    private String findApplicationNameProperties(Properties properties) {
+        if (properties == null) return null;
+        return properties.getProperty("spring.application.name");
     }
 }

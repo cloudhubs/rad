@@ -5,6 +5,8 @@ import edu.baylor.ecs.seer.entity.RestEntity;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.bytecode.AnnotationsAttribute;
+import javassist.bytecode.annotation.Annotation;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 import lombok.AllArgsConstructor;
@@ -21,16 +23,20 @@ public class SpringClientWrapperAnalyzer {
         HttpMethod httpMethod;
     }
 
-    static final RestTemplateMethod[] restTemplateMethods = {
+    private static final RestTemplateMethod[] restTemplateMethods = {
             new RestTemplateMethod("getForObject", HttpMethod.GET),
             new RestTemplateMethod("postForObject", HttpMethod.POST),
             new RestTemplateMethod("deleteForObject", HttpMethod.DELETE),
     };
 
-    static final String restTemplateClass = "org.springframework.web.client.RestTemplate";
+    private static final String restTemplateClass = "org.springframework.web.client.RestTemplate";
+    private static final String ribbonClientAnnotation = "org.springframework.cloud.netflix.ribbon.RibbonClient";
 
     public List<RestEntity> getRestEntity(CtClass ctClass) {
         List<RestEntity> restEntities = new ArrayList<>();
+
+        // get ribbon server name if specified
+        String ribbonServerName = getRibbonServerName(ctClass);
 
         for (CtMethod ctMethod : ctClass.getMethods()) {
             RestTemplateMethod foundMethod = findCaller(ctMethod);
@@ -44,10 +50,28 @@ public class SpringClientWrapperAnalyzer {
                 restEntity.setMethodName(ctMethod.getName());
                 restEntity.setReturnType(Helper.getReturnType(ctMethod));
 
+                // add ribbon server name
+                restEntity.setRibbonServerName(ribbonServerName);
+
                 restEntities.add(restEntity);
             }
         }
         return restEntities;
+    }
+
+    private String getRibbonServerName(CtClass ctClass) {
+        AnnotationsAttribute annotationsAttribute = (AnnotationsAttribute) ctClass.getClassFile().getAttribute(AnnotationsAttribute.visibleTag);
+        if (annotationsAttribute != null) {
+            Annotation[] annotations = annotationsAttribute.getAnnotations();
+            for (Annotation annotation : annotations) {
+                if (annotation.getTypeName().equals(ribbonClientAnnotation)) {
+                    if (Helper.getAnnotationValue(annotation, "name") != null) {
+                        return Helper.getAnnotationValue(annotation, "name");
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private RestTemplateMethod findCaller(CtMethod method) {

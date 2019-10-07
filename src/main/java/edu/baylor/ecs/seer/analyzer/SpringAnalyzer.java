@@ -15,7 +15,7 @@ import java.util.List;
 
 @Component
 public class SpringAnalyzer {
-    static final String springAnnotationPrefix = "org.springframework.web.bind.annotation";
+    private static final String springAnnotationPrefix = "org.springframework.web.bind.annotation";
 
     public List<RestEntity> getRestEntity(CtClass ctClass) {
         List<RestEntity> restEntities = new ArrayList<>();

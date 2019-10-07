@@ -59,6 +59,12 @@ public class RestFlowService {
                         restServerEntity.getReturnType() != null &&
                         restClientEntity.getReturnType().equals(restServerEntity.getReturnType())) {
 
+                    // narrow down, match server name if specified
+                    String serverName = restClientEntity.getRibbonServerName();
+                    String applicationName = restServerEntity.getApplicationName();
+                    if (serverName != null && !serverName.equals(applicationName))
+                        continue;
+
                     createRestFlow(restFlows, restServerEntity, restClientEntity);
                 }
             }
