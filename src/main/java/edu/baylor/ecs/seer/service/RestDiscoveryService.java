@@ -160,6 +160,7 @@ public class RestDiscoveryService {
         // search if there is already an entry for this client
         for (RestFlow restFlow : restFlows) {
             if (restFlow.getResourcePath().equals(client.getResourcePath()) &&
+                    restFlow.getClassName().equals(client.getClassName()) &&
                     restFlow.getMethodName().equals(client.getMethodName())) {
 
                 restFlow.getServers().add(server);

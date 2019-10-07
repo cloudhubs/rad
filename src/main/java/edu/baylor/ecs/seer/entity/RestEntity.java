@@ -19,7 +19,7 @@ public class RestEntity {
     private String resourcePath;
     private String className;
     private String methodName;
-    private String returnType; // for endpoint methods
+    private String returnType;
 
     private String path;
     private List<Param> pathParams;

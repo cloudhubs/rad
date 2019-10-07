@@ -5,7 +5,6 @@ import edu.baylor.ecs.seer.entity.Param;
 import edu.baylor.ecs.seer.entity.RestEntity;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
