@@ -5,7 +5,6 @@ import edu.baylor.ecs.seer.entity.RestEntity;
 import javassist.CannotCompileException;
 import javassist.CtClass;
 import javassist.CtMethod;
-import javassist.NotFoundException;
 import javassist.expr.ExprEditor;
 import javassist.expr.MethodCall;
 import lombok.AllArgsConstructor;
@@ -43,11 +42,7 @@ public class SpringClientWrapperAnalyzer {
                 // add class and method signatures
                 restEntity.setClassName(ctClass.getName());
                 restEntity.setMethodName(ctMethod.getName());
-                try {
-                    restEntity.setReturnType(ctMethod.getReturnType().getName());
-                } catch (NotFoundException e) {
-                    restEntity.setReturnType(null);
-                }
+                restEntity.setReturnType(Helper.getReturnType(ctMethod));
 
                 restEntities.add(restEntity);
             }

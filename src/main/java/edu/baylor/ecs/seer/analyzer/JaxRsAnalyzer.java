@@ -54,13 +54,7 @@ public class JaxRsAnalyzer {
                 restEntity.setClient(isClient);
                 restEntity.setClassName(ctClass.getName());
                 restEntity.setMethodName(ctMethod.getName());
-                if (!isClient) {  // add return type
-                    try {
-                        restEntity.setReturnType(ctMethod.getReturnType().getName());
-                    } catch (NotFoundException e) {
-                        restEntity.setReturnType(null);
-                    }
-                }
+                restEntity.setReturnType(Helper.getReturnType(ctMethod));
 
                 restEntities.add(restEntity);
             }

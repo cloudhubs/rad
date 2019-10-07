@@ -1,5 +1,7 @@
 package edu.baylor.ecs.seer.analyzer;
 
+import javassist.CtMethod;
+import javassist.NotFoundException;
 import javassist.bytecode.annotation.Annotation;
 import org.apache.commons.io.FilenameUtils;
 
@@ -56,5 +58,25 @@ public class Helper {
         if (url.endsWith("/")) url = url.substring(0, url.length() - 1);
         if (path != null && path.length() > 1) url = url + path; // merge if path not empty
         return url;
+    }
+
+    public static String getReturnType(CtMethod method) {
+        try {
+            String genericSignature = method.getGenericSignature();
+            String simpleName = method.getReturnType().getSimpleName();
+            if (genericSignature != null && simpleName != null && simpleName.equals("List")) { // generic type
+                String[] splits = genericSignature.split("java/util/List<L");
+                String returnType = splits[splits.length - 1];
+
+                returnType = returnType.replace(";>;", "");
+                returnType = returnType.replaceAll("/", ".");
+                returnType = "java.util.List<" + returnType + ">";
+
+                return returnType;
+            }
+            return method.getReturnType().getName();
+        } catch (NotFoundException e) {
+            return null;
+        }
     }
 }
