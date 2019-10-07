@@ -1,8 +1,6 @@
 package edu.baylor.ecs.seer.service;
 
-import edu.baylor.ecs.seer.analyzer.Helper;
-import edu.baylor.ecs.seer.analyzer.JaxRsAnalyzer;
-import edu.baylor.ecs.seer.analyzer.SpringAnalyzer;
+import edu.baylor.ecs.seer.analyzer.*;
 import edu.baylor.ecs.seer.context.RadRequestContext;
 import edu.baylor.ecs.seer.context.RadResponseContext;
 import edu.baylor.ecs.seer.context.SeerRestEntityContext;
@@ -26,6 +24,8 @@ public class RestDiscoveryService {
     private final ResourceService resourceService;
     private final JaxRsAnalyzer jaxRsAnalyzer;
     private final SpringAnalyzer springAnalyzer;
+    private final SpringClientAnalyzer springClientAnalyzer;
+    private final SpringClientWrapperAnalyzer springClientWrapperAnalyzer;
 
     public RadResponseContext generateRadResponseContext(RadRequestContext request) {
         RadResponseContext radResponseContext = new RadResponseContext();
@@ -67,6 +67,8 @@ public class RestDiscoveryService {
         for (CtClass ctClass : allClasses) {
             restEntityContext.getRestEntities().addAll(jaxRsAnalyzer.getRestEntity(ctClass));
             restEntityContext.getRestEntities().addAll(springAnalyzer.getRestEntity(ctClass));
+            // springClientAnalyzer.find(ctClass, "getForObject", "org.springframework.web.client.RestTemplate");
+            restEntityContext.getRestEntities().addAll(springClientWrapperAnalyzer.getRestEntity(ctClass));
         }
 
         for (RestEntity restEntity : restEntityContext.getRestEntities()) {
@@ -111,6 +113,14 @@ public class RestDiscoveryService {
         }
 
         SeerRestFlowContext restFlowContext = new SeerRestFlowContext();
+        restFlowContext.getRestFlows().addAll(getRestFlows(serverEntities, clientEntities));
+        restFlowContext.getPossibleRestFlows().addAll(getPossibleRestFlows(serverEntities, clientEntities));
+
+        return restFlowContext;
+    }
+
+    public List<RestFlow> getRestFlows(List<RestEntity> serverEntities, List<RestEntity> clientEntities) {
+        List<RestFlow> restFlows = new ArrayList<>();
 
         // populate RestFlow
         for (RestEntity restClientEntity : clientEntities) {
@@ -125,14 +135,42 @@ public class RestDiscoveryService {
                     restFlow.setClassName(restClientEntity.getClassName());
                     restFlow.setMethodName(restClientEntity.getMethodName());
 
-                    restFlow.setChildren(new ArrayList<>());
-                    restFlow.getChildren().add(restServerEntity);
+                    if (restFlow.getServers() == null) restFlow.setServers(new ArrayList<>());
+                    restFlow.getServers().add(restServerEntity);
 
-                    restFlowContext.getRestFlows().add(restFlow);
+                    restFlows.add(restFlow);
+                }
+            }
+        }
+        return restFlows;
+    }
+
+    public List<RestFlow> getPossibleRestFlows(List<RestEntity> serverEntities, List<RestEntity> clientEntities) {
+        List<RestFlow> restFlows = new ArrayList<>();
+
+        // populate RestFlow
+        for (RestEntity restClientEntity : clientEntities) {
+            for (RestEntity restServerEntity : serverEntities) {
+                // match return type and http method
+                if (restClientEntity.getHttpMethod() == restServerEntity.getHttpMethod() &&
+                        restClientEntity.getReturnType() != null &&
+                        restServerEntity.getReturnType() != null &&
+                        restClientEntity.getReturnType().equals(restServerEntity.getReturnType())) {
+
+                    RestFlow restFlow = new RestFlow();
+
+                    restFlow.setResourcePath(restClientEntity.getResourcePath());
+                    restFlow.setClassName(restClientEntity.getClassName());
+                    restFlow.setMethodName(restClientEntity.getMethodName());
+
+                    if (restFlow.getPossibleServers() == null) restFlow.setPossibleServers(new ArrayList<>());
+                    restFlow.getPossibleServers().add(restServerEntity);
+
+                    restFlows.add(restFlow);
                 }
             }
         }
 
-        return restFlowContext;
+        return restFlows;
     }
 }

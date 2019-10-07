@@ -5,6 +5,7 @@ import edu.baylor.ecs.seer.entity.Param;
 import edu.baylor.ecs.seer.entity.RestEntity;
 import javassist.CtClass;
 import javassist.CtMethod;
+import javassist.NotFoundException;
 import javassist.bytecode.AnnotationsAttribute;
 import javassist.bytecode.ParameterAnnotationsAttribute;
 import javassist.bytecode.annotation.Annotation;
@@ -78,6 +79,11 @@ public class SpringAnalyzer {
                 // add class and method signatures
                 restEntity.setClassName(ctClass.getName());
                 restEntity.setMethodName(ctMethod.getName());
+                try {
+                    restEntity.setReturnType(ctMethod.getReturnType().getName());
+                } catch (NotFoundException e) {
+                    restEntity.setReturnType(null);
+                }
 
                 restEntities.add(restEntity);
             }

@@ -12,6 +12,8 @@ import java.util.List;
 @ToString
 public class RestEntity {
     private boolean isClient;
+    private boolean typeAnalyzedClient;
+
     private String url;
 
     private String resourcePath;
