@@ -46,13 +46,17 @@ public class LocalVariableScanner {
                 }
             } else if (isStringBuilderAppend(instruction)) {
                 appendStack = true;
+            } else if (isStringBuilderInit(instruction)) {
+                if (appendStack) {
+                    return value;
+                }
             }
 
             if (curValue != null) { // string constant found
                 if (!appendStack) { // no append operation remains
                     return curValue + value;
                 } else { // need to find another string constant to append
-                    value = curValue;
+                    value = curValue + value;
                     appendStack = false;
                 }
             }
@@ -68,6 +72,18 @@ public class LocalVariableScanner {
             if (indexWrapper.getType().equals("Method")) {
                 String value = (String) indexWrapper.getValue();
                 return value.contains("java.lang.StringBuilder.append");
+            }
+        }
+        return false;
+    }
+
+    private static boolean isStringBuilderInit(InstructionInfo instruction) {
+        if (instruction.getOpcode().equals("invokevirtual") && instruction.getInstruction() instanceof IndexWrapper) {
+            IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
+
+            if (indexWrapper.getType().equals("Method")) {
+                String value = (String) indexWrapper.getValue();
+                return value.contains("java.lang.StringBuilder.<init>");
             }
         }
         return false;
