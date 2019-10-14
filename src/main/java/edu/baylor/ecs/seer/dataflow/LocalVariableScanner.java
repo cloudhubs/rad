@@ -1,61 +1,142 @@
 package edu.baylor.ecs.seer.dataflow;
 
-import javassist.CtMethod;
-import javassist.bytecode.ConstPool;
-import javassist.bytecode.MethodInfo;
+import edu.baylor.ecs.seer.instruction.IndexWrapper;
+import edu.baylor.ecs.seer.instruction.InstructionInfo;
 
 import java.util.List;
 
 public class LocalVariableScanner {
 
-    public int findPosForMethodCal(List<String> instructions, String method) throws DataFlowException {
-        int pos = 0;
-        for (String instruction : instructions) {
-            if (instruction.contains("Method " + method)) {
-                return pos;
+    public static int findIndexForMethodCal(List<InstructionInfo> instructions, String method) throws DataFlowException {
+        int index = 0;
+        for (InstructionInfo instruction : instructions) {
+            if (instruction.getInstruction() instanceof IndexWrapper) {
+                IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
+
+                if (indexWrapper.getType().equals("Method") && indexWrapper.getValue() instanceof String) {
+                    String value = (String) indexWrapper.getValue();
+                    if (value.contains(method)) {
+                        return index;
+                    }
+                }
             }
-            pos++;
+            index++;
         }
         throw new DataFlowException("method not found");
     }
 
-    public String peekImmediateStringVariable(List<String> instructions, int pos) throws DataFlowException {
-        while (pos >= 0) {
-            pos--;
+    public static String peekImmediateStringVariable(List<InstructionInfo> instructions, int index) throws DataFlowException {
+        String value = "";
+        boolean appendStack = false;
 
-            String instruction = instructions.get(pos);
+        for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
+            InstructionInfo instruction = instructions.get(index);
 
-            if (instruction.startsWith("ldc")) {
+            String curValue = null;
 
+            if (getLDC(instruction) != null) {
+                curValue = getLDC(instruction);
+            } else if (getLoadInstructionPointer(instruction) != null) {
+                int pointer = getLoadInstructionPointer(instruction);
+                try {
+                    int storeIndex = peekImmediateStoreIndex(instructions, index, pointer);
+                    curValue = peekImmediateStringVariable(instructions, storeIndex); // recursive call
+                } catch (DataFlowException e) { // not declared inside the method, possibly method parameter
+                    curValue = "{" + pointer + "}"; // TODO
+                }
+            } else if (isStringBuilderAppend(instruction)) {
+                appendStack = true;
+            }
+
+            if (curValue != null) { // string constant found
+                if (!appendStack) { // no append operation remains
+                    return curValue + value;
+                } else { // need to find another string constant to append
+                    value = curValue;
+                    appendStack = false;
+                }
             }
         }
 
         throw new DataFlowException("string variable not found");
     }
 
-    public String peekImmediateStringVariable(CtMethod ctMethod, List<String> instructions, int currentPos) throws DataFlowException {
-        currentPos--;
-        if (currentPos < 0) throw new DataFlowException("position out of bound");
+    private static boolean isStringBuilderAppend(InstructionInfo instruction) {
+        if (instruction.getOpcode().equals("invokevirtual") && instruction.getInstruction() instanceof IndexWrapper) {
+            IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
 
-        try {
-            return getLDC(ctMethod, currentPos);
-        } catch (DataFlowException ignored) {
+            if (indexWrapper.getType().equals("Method")) {
+                String value = (String) indexWrapper.getValue();
+                return value.contains("java.lang.StringBuilder.append");
+            }
         }
-
-        throw new DataFlowException("cannot peek");
+        return false;
     }
 
-    private String getLDC(CtMethod ctMethod, int pos) throws DataFlowException {
-        MethodInfo info = ctMethod.getMethodInfo2();
-        ConstPool pool = info.getConstPool();
+    public static int peekImmediateStoreIndex(List<InstructionInfo> instructions, int index, int pointer) throws DataFlowException {
+        for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
+            InstructionInfo instruction = instructions.get(index);
 
-        int tag = pool.getTag(pos);
-        if (tag == 8) {
-            return pool.getStringInfo(pos);
-        } else {
-            throw new DataFlowException("not string LDC");
+            if (isStoreInstructionPointer(instruction, pointer)) {
+                return index;
+            }
         }
+
+        throw new DataFlowException("store pointer not found");
+    }
+
+    private static Integer getLoadInstructionPointer(InstructionInfo instruction) {
+        splitOneByteLoadInstruction(instruction); // aload_1 to aload 1
+        if (instruction.getOpcode().equals("aload") || instruction.getOpcode().equals("iload")) {
+            return (int) instruction.getInstruction();
+        }
+        return null;
+    }
+
+    private static boolean isStoreInstructionPointer(InstructionInfo instruction, int pointer) {
+        splitOneByteStoreInstruction(instruction); // astore_1 to astore 1
+        if (instruction.getOpcode().equals("astore") || instruction.getOpcode().equals("istore")) {
+            return pointer == (int) instruction.getInstruction();
+        }
+        return false;
+    }
+
+    private static void splitOneByteLoadInstruction(InstructionInfo instruction) {
+        if (instruction.getOpcode().contains("aload_")) { // aload_1, aload_2
+            String value = instruction.getOpcode().replace("aload_", "");
+            instruction.setOpcode("aload");
+            instruction.setInstruction(Integer.parseInt(value));
+        } else if (instruction.getOpcode().contains("iload_")) { // iload_1, iload_2
+            String value = instruction.getOpcode().replace("iload_", "");
+            instruction.setOpcode("iload");
+            instruction.setInstruction(Integer.parseInt(value));
+        }
+    }
+
+    public static void splitOneByteStoreInstruction(InstructionInfo instruction) {
+        if (instruction.getOpcode().contains("astore_")) { // astore_1, astore_2
+            String value = instruction.getOpcode().replace("astore_", "");
+            instruction.setOpcode("astore");
+            instruction.setInstruction(Integer.parseInt(value));
+        } else if (instruction.getOpcode().contains("istore_")) { // istore_1, istore_2
+            String value = instruction.getOpcode().replace("istore_", "");
+            instruction.setOpcode("istore");
+            instruction.setInstruction(Integer.parseInt(value));
+        }
+    }
+
+    public static String getLDC(InstructionInfo instruction) {
+        if (instruction.getOpcode().equals("ldc") && instruction.getInstruction() instanceof IndexWrapper) {
+            IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
+
+            if (indexWrapper.getType().equals("int")) {
+                return "" + (int) indexWrapper.getValue();
+            } else if (indexWrapper.getType().equals("String")) {
+                return (String) indexWrapper.getValue();
+            }
+        }
+
+        return null;
     }
 }
-
 
