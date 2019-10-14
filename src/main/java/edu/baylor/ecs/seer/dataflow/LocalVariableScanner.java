@@ -68,7 +68,7 @@ public class LocalVariableScanner {
                 if (!appendStack) { // no append operation required
                     return curValue;
                 } else { // append until StringBuilder Init found
-                    value.append(curValue);
+                    value.insert(0, curValue);
                 }
             }
         }
