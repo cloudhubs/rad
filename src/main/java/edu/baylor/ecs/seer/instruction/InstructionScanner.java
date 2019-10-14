@@ -15,7 +15,7 @@ public class InstructionScanner implements Opcode {
 
     private static final String[] opcodes;
 
-    public List<InstructionInfo> scan(CtMethod method) {
+    public static List<InstructionInfo> scan(CtMethod method) {
         List<InstructionInfo> instructionInfos = new ArrayList<>();
 
         MethodInfo info = method.getMethodInfo2();

@@ -1,5 +1,6 @@
 package edu.baylor.ecs.seer.dataflow;
 
+import edu.baylor.ecs.seer.instruction.InstructionScanner;
 import javassist.*;
 import javassist.bytecode.*;
 import javassist.bytecode.analysis.Analyzer;
@@ -16,7 +17,8 @@ public class JavaAssistAnalyzer {
 
     public void printInstruction(CtMethod ctMethod) {
         System.out.println("INSTRUCTIONS");
-        InstructionPrinter.print(ctMethod, System.out);
+        //InstructionPrinter.print(ctMethod, System.out);
+        InstructionScanner.scan(ctMethod).stream().forEach(System.out::println);
     }
 
     public List<String> getInstructions(CtMethod ctMethod) {

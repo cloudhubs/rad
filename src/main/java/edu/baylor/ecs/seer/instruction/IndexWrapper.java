@@ -12,5 +12,5 @@ import lombok.ToString;
 public class IndexWrapper {
     private int index;
     private String type;
-    private Object instruction;
+    private Object value;
 }
