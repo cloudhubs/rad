@@ -2,7 +2,7 @@ package edu.baylor.ecs.seer.dataflow;
 
 import edu.baylor.ecs.seer.instruction.InstructionScanner;
 import javassist.*;
-import javassist.bytecode.*;
+import javassist.bytecode.BadBytecode;
 import javassist.bytecode.analysis.Analyzer;
 import javassist.bytecode.analysis.Frame;
 import javassist.expr.ExprEditor;
@@ -10,8 +10,6 @@ import javassist.expr.MethodCall;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 
 public class JavaAssistAnalyzer {
 
@@ -19,26 +17,6 @@ public class JavaAssistAnalyzer {
         System.out.println("INSTRUCTIONS");
         //InstructionPrinter.print(ctMethod, System.out);
         InstructionScanner.scan(ctMethod).stream().forEach(System.out::println);
-    }
-
-    public List<String> getInstructions(CtMethod ctMethod) {
-        List<String> instructions = new ArrayList<>();
-
-        MethodInfo info = ctMethod.getMethodInfo2();
-        ConstPool pool = info.getConstPool();
-        CodeAttribute code = info.getCodeAttribute();
-        if (code != null) {
-            int pos;
-            for (CodeIterator iterator = code.iterator(); iterator.hasNext(); instructions.add(InstructionPrinter.instructionString(iterator, pos, pool))) {
-                try {
-                    pos = iterator.next();
-                } catch (BadBytecode var8) {
-                    throw new RuntimeException(var8);
-                }
-            }
-        }
-
-        return instructions;
     }
 
     public void analyzeFrame(CtMethod ctMethod) throws BadBytecode {
@@ -55,7 +33,7 @@ public class JavaAssistAnalyzer {
         System.out.println(frames[6].peek());
     }
 
-    public int getByteCodeIndex(CtMethod method, String targetMethod, String targetClass) {
+    public int getByteCodeIndexForMethodCall(CtMethod method, String targetMethod, String targetClass) {
         final int[] byteCodeIndex = {-1};
         try {
             method.instrument(
