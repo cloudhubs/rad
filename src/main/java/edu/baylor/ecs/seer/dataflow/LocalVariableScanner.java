@@ -26,7 +26,7 @@ public class LocalVariableScanner {
     }
 
     public static String peekImmediateStringVariable(List<InstructionInfo> instructions, int index) throws DataFlowException {
-        String value = "";
+        StringBuilder value = new StringBuilder();
         boolean appendStack = false;
 
         for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
@@ -48,16 +48,15 @@ public class LocalVariableScanner {
                 appendStack = true;
             } else if (isStringBuilderInit(instruction)) {
                 if (appendStack) {
-                    return value;
+                    return value.toString();
                 }
             }
 
             if (curValue != null) { // string constant found
-                if (!appendStack) { // no append operation remains
-                    return curValue + value;
-                } else { // need to find another string constant to append
-                    value = curValue + value;
-                    appendStack = false;
+                if (!appendStack) { // no append operation required
+                    return curValue;
+                } else { // append until StringBuilder Init found
+                    value.append(curValue);
                 }
             }
         }
@@ -78,7 +77,7 @@ public class LocalVariableScanner {
     }
 
     private static boolean isStringBuilderInit(InstructionInfo instruction) {
-        if (instruction.getOpcode().equals("invokevirtual") && instruction.getInstruction() instanceof IndexWrapper) {
+        if (instruction.getOpcode().equals("invokespecial") && instruction.getInstruction() instanceof IndexWrapper) {
             IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
 
             if (indexWrapper.getType().equals("Method")) {

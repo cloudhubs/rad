@@ -22,10 +22,10 @@ public class Main {
 //        String method = "getQuestionsForExam";
 
         String compiledClasspath = "C:\\seer-lab\\cil-rad\\target\\classes\\edu\\baylor\\ecs\\seer\\dataflow\\SampleRestClient.class";
-        String method = "restCall05";
+        String method = "restCall01";
 
         CtMethod ctMethod = javaAssistAnalyzer.getCtMethodFromClassFile(compiledClasspath, method);
-        javaAssistAnalyzer.printInstruction(ctMethod);
+        // javaAssistAnalyzer.printInstruction(ctMethod);
 
         List<InstructionInfo> instructions = InstructionScanner.scan(ctMethod);
 
