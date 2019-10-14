@@ -2,7 +2,9 @@ package edu.baylor.ecs.seer.dataflow;
 
 import edu.baylor.ecs.seer.instruction.IndexWrapper;
 import edu.baylor.ecs.seer.instruction.InstructionInfo;
+import edu.baylor.ecs.seer.instruction.StringStackElement;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class LocalVariableScanner {
@@ -25,18 +27,26 @@ public class LocalVariableScanner {
         throw new DataFlowException("method not found");
     }
 
-    public static String peekImmediateStringVariable(List<InstructionInfo> instructions, int index) throws DataFlowException {
-        StringBuilder value = new StringBuilder();
+    public static List<StringStackElement> peekImmediateStringVariable(List<InstructionInfo> instructions, int index) throws DataFlowException {
+        List<StringStackElement> stringStackElements = new ArrayList<>();
+
         boolean appendStack = false;
         boolean fieldAccess = false;
 
         for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
             InstructionInfo instruction = instructions.get(index);
 
-            String curValue = null;
+            boolean foundImmediate = false;
 
             if (getLDC(instruction) != null) {
-                curValue = getLDC(instruction);
+                foundImmediate = true;
+
+                StringStackElement stringStackElement = new StringStackElement(
+                        StringStackElement.StringStackElementType.CONSTANT,
+                        getLDC(instruction)
+                );
+                stringStackElements.add(stringStackElement);
+
             } else if (getLoadInstructionPointer(instruction) != null) {
                 int pointer = getLoadInstructionPointer(instruction);
 
@@ -45,31 +55,45 @@ public class LocalVariableScanner {
                     if (pointer != 0) {
                         throw new DataFlowException("field access error");
                     }
+
                 } else {
+                    foundImmediate = true;
+
                     try {
                         int storeIndex = peekImmediateStoreIndex(instructions, index, pointer);
-                        curValue = peekImmediateStringVariable(instructions, storeIndex); // recursive call
+                        stringStackElements.addAll(peekImmediateStringVariable(instructions, storeIndex)); // recursive call
                     } catch (DataFlowException e) { // not declared inside the method, possibly method parameter
-                        curValue = "{" + pointer + "}"; // TODO
+                        StringStackElement stringStackElement = new StringStackElement(
+                                StringStackElement.StringStackElementType.PARAM,
+                                Integer.toString(pointer)
+                        );
+                        stringStackElements.add(stringStackElement);
                     }
                 }
+
             } else if (getFieldAccess(instruction) != null) {
-                curValue = "{" + getFieldAccess(instruction) + "}";
+                foundImmediate = true;
                 fieldAccess = true;
+
+                StringStackElement stringStackElement = new StringStackElement(
+                        StringStackElement.StringStackElementType.FIELD,
+                        getFieldAccess(instruction)
+                );
+                stringStackElements.add(stringStackElement);
+
             } else if (isStringBuilderAppend(instruction)) {
                 appendStack = true;
+
             } else if (isStringBuilderInit(instruction)) {
                 if (appendStack) {
-                    return value.toString();
+                    return stringStackElements;
                 }
             }
 
-            if (curValue != null) { // string constant found
-                if (!appendStack) { // no append operation required
-                    return curValue;
-                } else { // append until StringBuilder Init found
-                    value.insert(0, curValue);
-                }
+            // string constant found and no append operation required
+            // otherwise append until StringBuilder Init found
+            if (foundImmediate && !appendStack) {
+                return stringStackElements;
             }
         }
 
