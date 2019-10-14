@@ -17,18 +17,11 @@ import java.util.List;
 
 @Component
 public class SpringClientWrapperAnalyzer {
-    @AllArgsConstructor
-    private static class RestTemplateMethod {
-        String restTemplateMethod;
-        HttpMethod httpMethod;
-    }
-
     private static final RestTemplateMethod[] restTemplateMethods = {
             new RestTemplateMethod("getForObject", HttpMethod.GET),
             new RestTemplateMethod("postForObject", HttpMethod.POST),
             new RestTemplateMethod("deleteForObject", HttpMethod.DELETE),
     };
-
     private static final String restTemplateClass = "org.springframework.web.client.RestTemplate";
     private static final String ribbonClientAnnotation = "org.springframework.cloud.netflix.ribbon.RibbonClient";
 
@@ -96,5 +89,11 @@ public class SpringClientWrapperAnalyzer {
         }
 
         return foundMethod[0];
+    }
+
+    @AllArgsConstructor
+    private static class RestTemplateMethod {
+        String restTemplateMethod;
+        HttpMethod httpMethod;
     }
 }
