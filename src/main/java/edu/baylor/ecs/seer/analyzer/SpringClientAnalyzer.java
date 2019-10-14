@@ -1,6 +1,6 @@
 package edu.baylor.ecs.seer.analyzer;
 
-import edu.baylor.ecs.seer.entity.RestEntity;
+import edu.baylor.ecs.seer.model.RestEntity;
 import javassist.CtClass;
 import javassist.CtMethod;
 import org.springframework.stereotype.Component;

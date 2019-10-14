@@ -1,8 +1,8 @@
 package edu.baylor.ecs.seer.analyzer;
 
-import edu.baylor.ecs.seer.entity.HttpMethod;
-import edu.baylor.ecs.seer.entity.Param;
-import edu.baylor.ecs.seer.entity.RestEntity;
+import edu.baylor.ecs.seer.model.HttpMethod;
+import edu.baylor.ecs.seer.model.Param;
+import edu.baylor.ecs.seer.model.RestEntity;
 import javassist.CtClass;
 import javassist.CtMethod;
 import javassist.bytecode.AnnotationsAttribute;

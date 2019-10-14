@@ -3,8 +3,8 @@ package edu.baylor.ecs.seer.service;
 import edu.baylor.ecs.seer.analyzer.Helper;
 import edu.baylor.ecs.seer.context.SeerRestEntityContext;
 import edu.baylor.ecs.seer.context.SeerRestFlowContext;
-import edu.baylor.ecs.seer.entity.RestEntity;
-import edu.baylor.ecs.seer.entity.RestFlow;
+import edu.baylor.ecs.seer.model.RestEntity;
+import edu.baylor.ecs.seer.model.RestFlow;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

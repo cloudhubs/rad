@@ -1,6 +1,6 @@
 package edu.baylor.ecs.seer.context;
 
-import edu.baylor.ecs.seer.entity.RestEntity;
+import edu.baylor.ecs.seer.model.RestEntity;
 import lombok.Getter;
 import lombok.ToString;
 

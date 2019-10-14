@@ -1,4 +1,4 @@
-package edu.baylor.ecs.seer.entity;
+package edu.baylor.ecs.seer.model;
 
 import lombok.Getter;
 import lombok.Setter;

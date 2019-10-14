@@ -2,8 +2,8 @@ package edu.baylor.ecs.seer.service;
 
 import edu.baylor.ecs.seer.analyzer.*;
 import edu.baylor.ecs.seer.context.SeerRestEntityContext;
-import edu.baylor.ecs.seer.entity.HttpMethod;
-import edu.baylor.ecs.seer.entity.RestEntity;
+import edu.baylor.ecs.seer.model.HttpMethod;
+import edu.baylor.ecs.seer.model.RestEntity;
 import javassist.CtClass;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;

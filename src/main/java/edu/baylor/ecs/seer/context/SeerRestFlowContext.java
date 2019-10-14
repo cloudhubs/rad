@@ -1,6 +1,6 @@
 package edu.baylor.ecs.seer.context;
 
-import edu.baylor.ecs.seer.entity.RestFlow;
+import edu.baylor.ecs.seer.model.RestFlow;
 import lombok.Getter;
 import lombok.ToString;
 
