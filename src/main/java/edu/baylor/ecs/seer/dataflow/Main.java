@@ -1,5 +1,7 @@
 package edu.baylor.ecs.seer.dataflow;
 
+import edu.baylor.ecs.seer.instruction.InstructionInfo;
+import edu.baylor.ecs.seer.instruction.InstructionScanner;
 import javassist.CtMethod;
 
 import java.util.List;
@@ -8,10 +10,10 @@ import java.util.List;
  * DATA FLOW EXPERIMENTS
  */
 public class Main {
-    private static ASMAnalyzer asmAnalyzer = new ASMAnalyzer();
     private static JavaAssistAnalyzer javaAssistAnalyzer = new JavaAssistAnalyzer();
-    private static JavaParserAnalyzer javaParserAnalyzer = new JavaParserAnalyzer();
-    private static LocalVariableScanner localVariableScanner = new LocalVariableScanner();
+//    private static ASMAnalyzer asmAnalyzer = new ASMAnalyzer();
+//    private static JavaParserAnalyzer javaParserAnalyzer = new JavaParserAnalyzer();
+//    private static LocalVariableScanner localVariableScanner = new LocalVariableScanner();
 
     public static void main(String[] args) throws Exception {
         System.out.println("start");
@@ -20,22 +22,16 @@ public class Main {
 //        String method = "getQuestionsForExam";
 
         String compiledClasspath = "C:\\seer-lab\\cil-rad\\target\\classes\\edu\\baylor\\ecs\\seer\\dataflow\\SampleRestClient.class";
-        String method = "restCall04";
-
-//        asmAnalyzer.analyzeConstants(compiledClasspath, method);
+        String method = "restCall05";
 
         CtMethod ctMethod = javaAssistAnalyzer.getCtMethodFromClassFile(compiledClasspath, method);
         javaAssistAnalyzer.printInstruction(ctMethod);
 
-//        ctMethod = javaAssistAnalyzer.getCtMethodFromClassFile(compiledClasspath, "restCall02");
-//        javaAssistAnalyzer.printInstruction(ctMethod);
-//
-//        ctMethod = javaAssistAnalyzer.getCtMethodFromClassFile(compiledClasspath, "restCall03");
-//        javaAssistAnalyzer.printInstruction(ctMethod);
+        List<InstructionInfo> instructions = InstructionScanner.scan(ctMethod);
 
-        List<String> instructions = javaAssistAnalyzer.getInstructions(ctMethod);
+        int index = LocalVariableScanner.findIndexForMethodCal(instructions, "org.springframework.web.client.RestTemplate.getForObject");
 
-        String value = localVariableScanner.peekImmediateStringVariable(ctMethod, instructions, 11);
-        System.out.println(value);
+        String value = LocalVariableScanner.peekImmediateStringVariable(instructions, index);
+        System.out.println("URL: " + value);
     }
 }
