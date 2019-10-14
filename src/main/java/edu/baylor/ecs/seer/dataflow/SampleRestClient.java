@@ -4,6 +4,8 @@ import org.springframework.web.client.RestTemplate;
 
 public class SampleRestClient {
 
+    private String ip;
+
     public void restCall01() {
         RestTemplate restTemplate = new RestTemplate();
         SampleModel sampleModel = restTemplate.getForObject("localhost:8080/user", SampleModel.class);
@@ -32,5 +34,11 @@ public class SampleRestClient {
         String s1 = "localhost";
         String s2 = ":8080";
         SampleModel sampleModel = restTemplate.getForObject(s1 + s2 + "/user", SampleModel.class);
+    }
+
+    public void restCall06() {
+        RestTemplate restTemplate = new RestTemplate();
+        String port = "8080";
+        SampleModel sampleModel = restTemplate.getForObject(ip + ":" + port + "/user", SampleModel.class);
     }
 }

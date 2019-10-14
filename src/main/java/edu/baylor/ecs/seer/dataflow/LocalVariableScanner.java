@@ -28,6 +28,7 @@ public class LocalVariableScanner {
     public static String peekImmediateStringVariable(List<InstructionInfo> instructions, int index) throws DataFlowException {
         StringBuilder value = new StringBuilder();
         boolean appendStack = false;
+        boolean fieldAccess = false;
 
         for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
             InstructionInfo instruction = instructions.get(index);
@@ -38,12 +39,23 @@ public class LocalVariableScanner {
                 curValue = getLDC(instruction);
             } else if (getLoadInstructionPointer(instruction) != null) {
                 int pointer = getLoadInstructionPointer(instruction);
-                try {
-                    int storeIndex = peekImmediateStoreIndex(instructions, index, pointer);
-                    curValue = peekImmediateStringVariable(instructions, storeIndex); // recursive call
-                } catch (DataFlowException e) { // not declared inside the method, possibly method parameter
-                    curValue = "{" + pointer + "}"; // TODO
+
+                if (fieldAccess) { // must have aload_0 before field access
+                    fieldAccess = false;
+                    if (pointer != 0) {
+                        throw new DataFlowException("field access error");
+                    }
+                } else {
+                    try {
+                        int storeIndex = peekImmediateStoreIndex(instructions, index, pointer);
+                        curValue = peekImmediateStringVariable(instructions, storeIndex); // recursive call
+                    } catch (DataFlowException e) { // not declared inside the method, possibly method parameter
+                        curValue = "{" + pointer + "}"; // TODO
+                    }
                 }
+            } else if (getFieldAccess(instruction) != null) {
+                curValue = "{" + getFieldAccess(instruction) + "}";
+                fieldAccess = true;
             } else if (isStringBuilderAppend(instruction)) {
                 appendStack = true;
             } else if (isStringBuilderInit(instruction)) {
@@ -86,6 +98,18 @@ public class LocalVariableScanner {
             }
         }
         return false;
+    }
+
+    private static String getFieldAccess(InstructionInfo instruction) {
+        if (instruction.getOpcode().equals("getfield") && instruction.getInstruction() instanceof IndexWrapper) {
+            IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
+
+            if (indexWrapper.getType().equals("Field")) {
+                String value = (String) indexWrapper.getValue();
+                return value.split("\\(")[0];
+            }
+        }
+        return null;
     }
 
     public static int peekImmediateStoreIndex(List<InstructionInfo> instructions, int index, int pointer) throws DataFlowException {

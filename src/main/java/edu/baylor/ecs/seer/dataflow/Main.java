@@ -22,7 +22,7 @@ public class Main {
 //        String method = "getQuestionsForExam";
 
         String compiledClasspath = "C:\\seer-lab\\cil-rad\\target\\classes\\edu\\baylor\\ecs\\seer\\dataflow\\SampleRestClient.class";
-        String method = "restCall01";
+        String method = "restCall06";
 
         CtMethod ctMethod = javaAssistAnalyzer.getCtMethodFromClassFile(compiledClasspath, method);
         // javaAssistAnalyzer.printInstruction(ctMethod);
