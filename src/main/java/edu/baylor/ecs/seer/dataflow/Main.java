@@ -20,7 +20,7 @@ public class Main {
 //        String method = "getQuestionsForExam";
 
         String compiledClasspath = "C:\\seer-lab\\cil-rad\\target\\classes\\edu\\baylor\\ecs\\seer\\dataflow\\SampleRestClient.class";
-        String method = "restCall01";
+        String method = "restCall04";
 
 //        asmAnalyzer.analyzeConstants(compiledClasspath, method);
 

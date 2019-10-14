@@ -27,4 +27,12 @@ public class SampleRestClient {
         RestTemplate restTemplate = new RestTemplate();
         restTemplate.getForObject(xyz + "/def", SampleModel[].class);
     }
+
+    public void restCall04(int n, int m, String s) {
+        int x = 5;
+        String xyz = n + x + "pqr" + m + s;
+
+        RestTemplate restTemplate = new RestTemplate();
+        SampleModel sampleModel = restTemplate.getForObject(xyz + "/def", SampleModel.class);
+    }
 }
