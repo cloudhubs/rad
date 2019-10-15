@@ -1,9 +1,11 @@
 package edu.baylor.ecs.seer.dataflow;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 
 public class SampleRestClient {
 
+    @Value("${model.ip}")
     private String ip;
 
     public void restCall01() {
