@@ -27,6 +27,25 @@ public class LocalVariableScanner {
         throw new DataFlowException("method not found");
     }
 
+    // paramIndex - one based, reverse order
+    public static List<StringStackElement> peekParamForMethodCall(List<InstructionInfo> instructions, int index, int paramIndex) throws DataFlowException {
+        // skip through
+        for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
+            InstructionInfo instruction = instructions.get(index);
+            String opcode = instruction.getOpcode();
+
+            if (opcode.contains("ldc") || opcode.contains("aload") || opcode.contains("iload")) {
+                paramIndex--;
+            }
+
+            if (paramIndex == 1) {
+                break;
+            }
+        }
+
+        return peekImmediateStringVariable(instructions, index);
+    }
+
     public static List<StringStackElement> peekImmediateStringVariable(List<InstructionInfo> instructions, int index) throws DataFlowException {
         List<StringStackElement> stringStackElements = new ArrayList<>();
 
