@@ -24,7 +24,7 @@ public class SpringClientAnalyzer {
     private static class RestTemplateMethod {
         String restTemplateMethod;
         HttpMethod httpMethod;
-        int urlParamIndex;
+        int numberOfParams;
     }
 
     private static final RestTemplateMethod[] restTemplateMethods = {
@@ -68,7 +68,7 @@ public class SpringClientAnalyzer {
             // find url
             try {
                 List<StringStackElement> stringStackElements = LocalVariableScanner.peekParamForMethodCall(
-                        instructions, index, foundMethod.urlParamIndex);
+                        instructions, index, foundMethod.numberOfParams);
 
                 String url = StringStackElement.mergeStackElements(stringStackElements);
                 log.info(url);
