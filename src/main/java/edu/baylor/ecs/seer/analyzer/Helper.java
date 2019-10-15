@@ -4,9 +4,13 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.annotation.Annotation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.util.Properties;
+
+@Slf4j
 public class Helper {
     public static String mergePaths(String classPath, String methodPath) {
         if (classPath.startsWith("/")) classPath = classPath.substring(1);
@@ -89,8 +93,20 @@ public class Helper {
                     .replace("$", "")
                     .replace("{", "")
                     .replace("}", "");
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | NullPointerException e) {
+            log.error(field.getName() + " " + e.toString());
             return null;
+        }
+    }
+
+    public static void dumpProperties(Properties properties, String resourcePath) {
+        log.info("#Properties of " + resourcePath);
+        if (properties != null) {
+            for (Object key : properties.keySet()) {
+                log.info(key + ":" + properties.get(key));
+            }
+        } else {
+            log.error("null properties");
         }
     }
 }
