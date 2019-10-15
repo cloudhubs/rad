@@ -19,21 +19,21 @@ public class Main {
     public static void main(String[] args) throws Exception {
         System.out.println("start");
 
-        String compiledClasspath = "C:\\seer-lab\\cil-tms\\tms-cms\\target\\classes\\edu\\baylor\\ecs\\cms\\service\\EmsService.class";
-        String method = "getQuestionsForExam";
+        String compiledClasspath = "C:\\seer-lab\\cil-tms\\tms-cms\\target\\classes\\edu\\baylor\\ecs\\cms\\service\\QmsService.class";
+        String method = "createConfiguration";
 
 //        String compiledClasspath = "C:\\seer-lab\\cil-rad\\target\\classes\\edu\\baylor\\ecs\\seer\\dataflow\\SampleRestClient.class";
 //        String method = "restCall06";
 
         CtMethod ctMethod = javaAssistAnalyzer.getCtMethodFromClassFile(compiledClasspath, method);
-        // javaAssistAnalyzer.printInstruction(ctMethod);
+        javaAssistAnalyzer.printInstruction(ctMethod);
 
         List<InstructionInfo> instructions = InstructionScanner.scan(ctMethod);
 
-        int index = LocalVariableScanner.findIndexForMethodCal(instructions, "org.springframework.web.client.RestTemplate.getForObject");
+        int index = LocalVariableScanner.findIndexForMethodCal(instructions, "org.springframework.web.client.RestTemplate.postForObject");
 
-        List<StringStackElement> stringStackElements = LocalVariableScanner.peekImmediateStringVariable(instructions, index);
-        stringStackElements.stream().forEach(System.out::println);
+        List<StringStackElement> stringStackElements = LocalVariableScanner.peekParamForMethodCall(instructions, index, 3);
+        stringStackElements.forEach(System.out::println);
 
         System.out.println("URL: " + StringStackElement.mergeStackElements(stringStackElements));
     }
