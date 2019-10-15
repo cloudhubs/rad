@@ -23,10 +23,10 @@ public class RestEntityService {
         SeerRestEntityContext restEntityContext = new SeerRestEntityContext();
 
         for (CtClass ctClass : allClasses) {
-            restEntityContext.getRestEntities().addAll(jaxRsAnalyzer.getRestEntity(ctClass));
-            restEntityContext.getRestEntities().addAll(springAnalyzer.getRestEntity(ctClass));
-            // springClientAnalyzer.find(ctClass, "getForObject", "org.springframework.web.client.RestTemplate");
-            restEntityContext.getRestEntities().addAll(springClientWrapperAnalyzer.getRestEntity(ctClass));
+            //restEntityContext.getRestEntities().addAll(jaxRsAnalyzer.getRestEntity(ctClass));
+            //restEntityContext.getRestEntities().addAll(springAnalyzer.getRestEntity(ctClass));
+            restEntityContext.getRestEntities().addAll(springClientAnalyzer.getRestEntity(ctClass));
+            // restEntityContext.getRestEntities().addAll(springClientWrapperAnalyzer.getRestEntity(ctClass));
         }
 
         for (RestEntity restEntity : restEntityContext.getRestEntities()) {
@@ -54,7 +54,7 @@ public class RestEntityService {
 
         if (!restEntity.isClient()) { // set server ip and port
             restEntity.setUrl(Helper.mergeUrlPath(serverIP + ":" + serverPort, restEntity.getPath()));
-        } else { // set client ip and port from MicroProfile config
+        } else if (restEntity.getUrl() == null) { // set client ip and port from MicroProfile config
             String mpRestUrl = properties.getProperty(restEntity.getClassName() + "/mp-rest/url");
             if (mpRestUrl != null) {
                 restEntity.setUrl(Helper.mergeUrlPath(mpRestUrl, restEntity.getPath()));
