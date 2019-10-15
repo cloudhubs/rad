@@ -8,13 +8,16 @@ import edu.baylor.ecs.seer.instruction.StringStackElement;
 import edu.baylor.ecs.seer.model.HttpMethod;
 import edu.baylor.ecs.seer.model.RestEntity;
 import javassist.CtClass;
+import javassist.CtField;
 import javassist.CtMethod;
+import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 
 @Component
 @Slf4j
@@ -37,7 +40,7 @@ public class SpringClientAnalyzer {
 
     public static final String restTemplateClass = "org.springframework.web.client.RestTemplate";
 
-    public List<RestEntity> getRestEntity(CtClass ctClass) {
+    public List<RestEntity> getRestEntity(CtClass ctClass, Properties properties) {
         List<RestEntity> restEntities = new ArrayList<>();
 
         for (CtMethod ctMethod : ctClass.getMethods()) {
@@ -70,6 +73,33 @@ public class SpringClientAnalyzer {
                 List<StringStackElement> stringStackElements = LocalVariableScanner.peekParamForMethodCall(
                         instructions, index, foundMethod.numberOfParams);
 
+                // find field values defined by @value annotation
+                for (StringStackElement stringStackElement : stringStackElements) {
+                    if (stringStackElement.getType() == StringStackElement.StringStackElementType.FIELD) {
+                        String simpleFieldName = stringStackElement.getValue().replace(ctClass.getName() + ".", "");
+
+                        CtField ctField = ctClass.getField(simpleFieldName);
+
+                        String propertyName = Helper.getFieldAnnotationValue(ctField);
+                        String propertyValue = null;
+
+                        if (propertyName != null && properties != null) {
+                            log.info(propertyName);
+                            propertyValue = properties.getProperty(propertyName);
+                            propertyValue = Helper.removeEnclosedQuotations(propertyValue);
+                            propertyValue = Helper.removeEnclosedSingleQuotations(propertyValue);
+                        }
+
+                        if (propertyValue != null) {
+                            stringStackElement.setType(StringStackElement.StringStackElementType.CONSTANT);
+                            stringStackElement.setValue(propertyValue);
+                        } else {
+                            throw new DataFlowException("Can not resolve field value for " + stringStackElement.getValue());
+                        }
+                    }
+                }
+
+                // build the url from stack elements
                 String url = StringStackElement.mergeStackElements(stringStackElements);
                 log.info(url);
 
@@ -86,7 +116,7 @@ public class SpringClientAnalyzer {
 
                 restEntities.add(restEntity);
 
-            } catch (DataFlowException e) {
+            } catch (DataFlowException | NotFoundException e) {
                 log.error(e.toString());
             }
         }
