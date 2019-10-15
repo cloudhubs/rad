@@ -1,9 +1,11 @@
 package edu.baylor.ecs.seer.analyzer;
 
+import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import javassist.bytecode.annotation.Annotation;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.beans.factory.annotation.Value;
 
 public class Helper {
     public static String mergePaths(String classPath, String methodPath) {
@@ -76,6 +78,18 @@ public class Helper {
             }
             return method.getReturnType().getName();
         } catch (NotFoundException e) {
+            return null;
+        }
+    }
+
+    public static String getFieldAnnotationValue(CtField field) {
+        try {
+            Value value = (Value) field.getAnnotation(Value.class);
+            return value.value()
+                    .replace("$", "")
+                    .replace("{", "")
+                    .replace("}", "");
+        } catch (ClassNotFoundException e) {
             return null;
         }
     }

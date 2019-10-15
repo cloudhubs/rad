@@ -66,4 +66,9 @@ public class JavaAssistAnalyzer {
         CtClass ctClass = pool.makeClass(new FileInputStream(path));
         return ctClass.getDeclaredMethod(method);
     }
+
+    public CtClass getCtClassClassFile(String path) throws IOException {
+        ClassPool pool = ClassPool.getDefault();
+        return pool.makeClass(new FileInputStream(path));
+    }
 }
