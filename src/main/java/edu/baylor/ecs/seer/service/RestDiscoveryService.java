@@ -1,6 +1,5 @@
 package edu.baylor.ecs.seer.service;
 
-import edu.baylor.ecs.seer.analyzer.Helper;
 import edu.baylor.ecs.seer.context.RadRequestContext;
 import edu.baylor.ecs.seer.context.RadResponseContext;
 import edu.baylor.ecs.seer.context.SeerRestEntityContext;
@@ -36,7 +35,7 @@ public class RestDiscoveryService {
             } else properties = null;
 
             // print the properties for debug
-            Helper.dumpProperties(properties, path);
+            // Helper.dumpProperties(properties, path);
 
             SeerRestEntityContext restEntityContext = restEntityService.getRestEntityContext(ctClasses, path, properties);
             radResponseContext.getRestEntityContexts().add(restEntityContext);
