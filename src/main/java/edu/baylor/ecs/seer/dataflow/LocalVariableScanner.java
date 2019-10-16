@@ -33,7 +33,7 @@ public class LocalVariableScanner {
             InstructionInfo instruction = instructions.get(index);
             String opcode = instruction.getOpcode();
 
-            if (opcode.contains("ldc") || opcode.contains("aload") || opcode.contains("iload")) {
+            if (opcode.contains("ldc") || opcode.contains("aload") || opcode.contains("iload") || opcode.contains("getstatic")) {
                 numberOfParams--;
             }
 

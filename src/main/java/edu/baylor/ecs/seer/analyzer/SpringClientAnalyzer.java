@@ -12,6 +12,7 @@ import javassist.CtField;
 import javassist.CtMethod;
 import javassist.NotFoundException;
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -24,6 +25,7 @@ import java.util.Properties;
 public class SpringClientAnalyzer {
 
     @AllArgsConstructor
+    @ToString
     private static class RestTemplateMethod {
         String restTemplateMethod;
         HttpMethod httpMethod;
@@ -33,7 +35,7 @@ public class SpringClientAnalyzer {
     private static final RestTemplateMethod[] restTemplateMethods = {
             new RestTemplateMethod("getForObject", HttpMethod.GET, 2),
             new RestTemplateMethod("getForEntity", HttpMethod.GET, 2),
-            new RestTemplateMethod("exchange", HttpMethod.GET, 4),
+            new RestTemplateMethod("exchange", HttpMethod.GET, 3),
             new RestTemplateMethod("postForObject", HttpMethod.POST, 3),
             new RestTemplateMethod("delete", HttpMethod.DELETE, 1),
     };
@@ -67,11 +69,19 @@ public class SpringClientAnalyzer {
             }
 
             log.info(ctMethod.getLongName());
+//            if(ctMethod.getLongName().equals("edu.baylor.ecs.ems.service.QmsService.getQuestions(java.lang.Integer)")) {
+//                new JavaAssistAnalyzer().printInstruction(ctMethod);
+//            }
 
             // find url
             try {
                 List<StringStackElement> stringStackElements = LocalVariableScanner.peekParamForMethodCall(
                         instructions, index, foundMethod.numberOfParams);
+
+//                if(ctMethod.getLongName().equals("edu.baylor.ecs.ems.service.QmsService.getQuestions(java.lang.Integer)")) {
+//                    System.out.println(foundMethod);
+//                    stringStackElements.forEach(System.out::println);
+//                }
 
                 // find field values defined by @value annotation
                 for (StringStackElement stringStackElement : stringStackElements) {
@@ -84,7 +94,6 @@ public class SpringClientAnalyzer {
                         String propertyValue = null;
 
                         if (propertyName != null && properties != null) {
-                            log.info(propertyName);
                             propertyValue = properties.getProperty(propertyName);
                             propertyValue = Helper.removeEnclosedQuotations(propertyValue);
                             propertyValue = Helper.removeEnclosedSingleQuotations(propertyValue);
