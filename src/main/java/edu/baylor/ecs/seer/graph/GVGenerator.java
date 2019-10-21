@@ -1,4 +1,4 @@
-package edu.baylor.ecs.seer.Graph;
+package edu.baylor.ecs.seer.graph;
 
 import edu.baylor.ecs.seer.context.RadResponseContext;
 import edu.baylor.ecs.seer.model.RestEntity;
@@ -12,19 +12,6 @@ import java.util.Map;
 import java.util.Set;
 
 public class GVGenerator {
-    /*public static void generate(RadResponseContext radResponseContext) throws IOException {
-        Graph g = graph("rad").directed();
-
-        for (RestFlow restFlow : radResponseContext.getRestFlowContext().getRestFlows()) {
-            RestEntity server = restFlow.getServers().get(0);
-            Node nodeFrom = node(restFlow.getClassName() + "." + restFlow.getMethodName());
-            Node nodeTo = node(server.getClassName() + "." + server.getMethodName());
-            g = g.with(nodeFrom.link(nodeTo));
-        }
-
-        Graphviz.fromGraph(g).render(Format.SVG).toFile(new File("C:\\Users\\das\\Desktop\\rad.svg"));
-    }*/
-
     public static void generate(RadResponseContext radResponseContext) {
         StringBuilder graph = new StringBuilder();
         graph.append("digraph cil_rad {").append("\n");
