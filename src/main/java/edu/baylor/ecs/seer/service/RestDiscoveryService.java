@@ -1,5 +1,6 @@
 package edu.baylor.ecs.seer.service;
 
+import edu.baylor.ecs.seer.Graph.GVGenerator;
 import edu.baylor.ecs.seer.context.RadRequestContext;
 import edu.baylor.ecs.seer.context.RadResponseContext;
 import edu.baylor.ecs.seer.context.SeerRestEntityContext;
@@ -43,6 +44,8 @@ public class RestDiscoveryService {
 
         SeerRestFlowContext restFlowContext = restFlowService.getRestFlowContext(radResponseContext.getRestEntityContexts());
         radResponseContext.setRestFlowContext(restFlowContext);
+
+        GVGenerator.generate(radResponseContext);
 
         return radResponseContext;
     }
