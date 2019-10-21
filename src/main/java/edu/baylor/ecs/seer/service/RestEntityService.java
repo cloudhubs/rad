@@ -21,6 +21,7 @@ public class RestEntityService {
 
     public SeerRestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, Properties properties) {
         SeerRestEntityContext restEntityContext = new SeerRestEntityContext();
+        restEntityContext.setResourcePath(path);
 
         for (CtClass ctClass : allClasses) {
             restEntityContext.getRestEntities().addAll(jaxRsAnalyzer.getRestEntity(ctClass));
