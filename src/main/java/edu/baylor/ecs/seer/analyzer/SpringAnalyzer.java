@@ -130,13 +130,17 @@ public class SpringAnalyzer {
                         restEntity.setConsumeType(Helper.getAnnotationValue(annotation, "consumes"));
                     }
                 } else if (annotationToHttpMethodMapping(annotationType) != null) {
-                    restEntity.setPath(Helper.getAnnotationValue(annotation, "value"));
+                    if (Helper.getAnnotationValue(annotation, "value") != null) {
+                        restEntity.setPath(Helper.getAnnotationValue(annotation, "value"));
+                    } else {
+                        restEntity.setPath(Helper.getAnnotationValue(annotation, "path")); // path is alias for value
+                    }
                     restEntity.setHttpMethod(annotationToHttpMethodMapping(annotationType));
                 } else {
                     isRestAnnotation = false;
                 }
 
-                // true if at least one JAX-RS annotation found
+                // true if at least one spring server annotation found
                 isRestHandlerMethod = isRestHandlerMethod || isRestAnnotation;
             }
         }
