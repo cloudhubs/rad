@@ -8,4 +8,5 @@ import lombok.ToString;
 public class RadRequestContext {
     private String pathToCompiledMicroservices;
     private String organizationPath;
+    private String outputPath;
 }

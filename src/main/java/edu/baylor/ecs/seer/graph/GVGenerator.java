@@ -54,7 +54,7 @@ public class GVGenerator {
 
         graph.append("}");
 
-        try (PrintWriter out = new PrintWriter("C:\\Users\\das\\Desktop\\rad.gv")) {
+        try (PrintWriter out = new PrintWriter(radResponseContext.getRequest().getOutputPath())) {
             out.println(graph);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
