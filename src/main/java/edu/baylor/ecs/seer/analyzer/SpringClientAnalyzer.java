@@ -40,7 +40,7 @@ public class SpringClientAnalyzer {
             new RestTemplateMethod("delete", HttpMethod.DELETE, 1),
     };
 
-    public static final String restTemplateClass = "org.springframework.web.client.RestTemplate";
+    private static final String restTemplateClass = "org.springframework.web.client.RestTemplate";
 
     public List<RestEntity> getRestEntity(CtClass ctClass, Properties properties) {
         List<RestEntity> restEntities = new ArrayList<>();
@@ -68,20 +68,10 @@ public class SpringClientAnalyzer {
                 continue;
             }
 
-            log.info(ctMethod.getLongName());
-//            if(ctMethod.getLongName().equals("edu.baylor.ecs.ems.service.QmsService.getQuestions(java.lang.Integer)")) {
-//                new JavaAssistAnalyzer().printInstruction(ctMethod);
-//            }
-
             // find url
             try {
                 List<StringStackElement> stringStackElements = LocalVariableScanner.peekParamForMethodCall(
                         instructions, index, foundMethod.numberOfParams);
-
-//                if(ctMethod.getLongName().equals("edu.baylor.ecs.ems.service.QmsService.getQuestions(java.lang.Integer)")) {
-//                    System.out.println(foundMethod);
-//                    stringStackElements.forEach(System.out::println);
-//                }
 
                 // find field values defined by @value annotation
                 for (StringStackElement stringStackElement : stringStackElements) {
@@ -110,7 +100,6 @@ public class SpringClientAnalyzer {
 
                 // build the url from stack elements
                 String url = StringStackElement.mergeStackElements(stringStackElements);
-                log.info(url);
 
                 // create rest entity
                 RestEntity restEntity = new RestEntity();
