@@ -55,8 +55,12 @@ public class Helper {
         return removeAmbiguity(clientUrl).equals(removeAmbiguity(serverUrl));
     }
 
+    public static String unifyPathVariable(String url) {
+        return url.replaceAll("\\{[^{]*?}", "{var}");
+    }
+
     public static String removeAmbiguity(String url) {
-        return url.replaceAll("[^a-zA-Z0-9]", "");
+        return unifyPathVariable(url).replaceAll("[^a-zA-Z0-9]", "");
     }
 
     public static String mergeUrlPath(String url, String path) {
