@@ -11,6 +11,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * This class generates a Graphviz file from {@link edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext}.
+ * The Graphviz file visualizes the rest flows among the microservices.
+ *
+ * @author Dipta Das
+ */
+
 public class GVGenerator {
     public static void generate(RadResponseContext radResponseContext) {
         StringBuilder graph = new StringBuilder();

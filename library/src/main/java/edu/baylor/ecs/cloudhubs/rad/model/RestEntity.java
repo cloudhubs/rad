@@ -7,6 +7,13 @@ import lombok.ToString;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class defines a REST entity along with it's properties and metadata.
+ * A rest entity can be a rest-endpoint(server) or, a rest-call(client).
+ *
+ * @author Dipta Das
+ */
+
 @Getter
 @Setter
 @ToString

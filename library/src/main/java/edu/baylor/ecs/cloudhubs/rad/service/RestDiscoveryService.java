@@ -14,6 +14,13 @@ import java.util.List;
 import java.util.Properties;
 import java.util.Set;
 
+/**
+ * This class constructs a {@link edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext}.
+ * It takes a {@link edu.baylor.ecs.cloudhubs.rad.context.RadRequestContext} as input.
+ *
+ * @author Dipta Das
+ */
+
 @AllArgsConstructor
 @Service
 public class RestDiscoveryService {

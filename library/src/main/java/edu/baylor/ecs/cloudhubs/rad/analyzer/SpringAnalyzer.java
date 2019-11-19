@@ -13,6 +13,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class performs Spring Boot RestController annotation analysis.
+ * It constructs a list of {@link edu.baylor.ecs.cloudhubs.rad.model.RestEntity} of rest endpoints.
+ *
+ * @author Dipta Das
+ */
+
 @Component
 public class SpringAnalyzer {
     private static final String springAnnotationPrefix = "org.springframework.web.bind.annotation";

@@ -7,6 +7,13 @@ import edu.baylor.ecs.cloudhubs.rad.instruction.StringStackElement;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class detects the argument of a method call from a list of {@link edu.baylor.ecs.cloudhubs.rad.instruction.InstructionInfo}.
+ * It constructs a list of {@link edu.baylor.ecs.cloudhubs.rad.instruction.StringStackElement}.
+ *
+ * @author Dipta Das
+ */
+
 public class LocalVariableScanner {
 
     public static int findIndexForMethodCal(List<InstructionInfo> instructions, String method) throws DataFlowException {

@@ -14,6 +14,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * This class constructs a {@link edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext}.
+ * It takes a list of JavaAssist CtClass as input.
+ *
+ * @author Dipta Das
+ */
+
 @Service
 @AllArgsConstructor
 public class RestEntityService {

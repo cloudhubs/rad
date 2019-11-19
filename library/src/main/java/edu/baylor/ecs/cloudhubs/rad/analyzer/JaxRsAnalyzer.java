@@ -13,6 +13,13 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class performs JAX RS annotation analysis and micro-profile client analysis.
+ * It constructs a list of {@link edu.baylor.ecs.cloudhubs.rad.model.RestEntity}.
+ *
+ * @author Dipta Das
+ */
+
 @Component
 public class JaxRsAnalyzer {
     static final String jaxRsAnnotationPrefix = "javax.ws.rs";

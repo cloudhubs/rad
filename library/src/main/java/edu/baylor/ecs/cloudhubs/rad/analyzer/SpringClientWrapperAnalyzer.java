@@ -15,6 +15,15 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class detects Spring Boot RestTemplate client calls.
+ * It can detect the return type of a rest call using return type of the wrapper method.
+ * It can not detect the url of a rest call.
+ * It constructs a list of {@link edu.baylor.ecs.cloudhubs.rad.model.RestEntity} of rest clients.
+ *
+ * @author Dipta Das
+ */
+
 @Component
 public class SpringClientWrapperAnalyzer {
     private static final RestTemplateMethod[] restTemplateMethods = {

@@ -6,6 +6,14 @@ import javassist.bytecode.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class constructs a list of {@link edu.baylor.ecs.cloudhubs.rad.instruction.InstructionInfo}.
+ * It takes CtMethod of JavaAssist library as input.
+ * This class is adopted from JavaAssist library with necessary modifications.
+ *
+ * @author Dipta Das
+ */
+
 public class InstructionScanner implements Opcode {
     static {
         opcodes = Mnemonic.OPCODE;

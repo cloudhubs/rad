@@ -10,6 +10,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class constructs a {@link edu.baylor.ecs.cloudhubs.rad.context.SeerRestFlowContext}.
+ * It takes a list of {@link edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext} as input.
+ * It matches client entities with server entities based on url and other properties.
+ *
+ * @author Dipta Das
+ */
+
 @Service
 public class RestFlowService {
     public SeerRestFlowContext getRestFlowContext(List<SeerRestEntityContext> restEntityContexts) {

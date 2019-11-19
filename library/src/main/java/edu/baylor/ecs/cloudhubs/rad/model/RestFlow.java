@@ -6,6 +6,12 @@ import lombok.ToString;
 
 import java.util.List;
 
+/**
+ * This class defines REST communications between a client and a list of servers.
+ *
+ * @author Dipta Das
+ */
+
 @Getter
 @Setter
 @ToString

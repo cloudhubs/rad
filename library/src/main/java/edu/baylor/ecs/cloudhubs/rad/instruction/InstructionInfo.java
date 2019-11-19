@@ -5,6 +5,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * This class wraps a bytecode instruction along with its opcode and position.
+ *
+ * @author Dipta Das
+ */
+
 @Getter
 @Setter
 @AllArgsConstructor

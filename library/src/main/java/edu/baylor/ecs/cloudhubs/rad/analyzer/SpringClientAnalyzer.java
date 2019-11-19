@@ -20,6 +20,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
+/**
+ * This class detects Spring Boot RestTemplate client calls.
+ * It can detect both url and return type of a rest call.
+ * It uses {@link edu.baylor.ecs.cloudhubs.rad.dataflow.LocalVariableScanner} to detect the url.
+ * It constructs a list of {@link edu.baylor.ecs.cloudhubs.rad.model.RestEntity} of rest clients.
+ *
+ * @author Dipta Das
+ */
+
 @Component
 @Slf4j
 public class SpringClientAnalyzer {

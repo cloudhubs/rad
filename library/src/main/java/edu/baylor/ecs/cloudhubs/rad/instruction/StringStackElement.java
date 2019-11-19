@@ -7,6 +7,13 @@ import lombok.ToString;
 
 import java.util.List;
 
+/**
+ * This class defines a simplified version of a bytecode instruction.
+ * It only contains the required information for DataFlow analysis.
+ *
+ * @author Dipta Das
+ */
+
 @AllArgsConstructor
 @Getter
 @Setter

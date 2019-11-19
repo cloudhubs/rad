@@ -10,6 +10,12 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Properties;
 
+/**
+ * This class contains several static helper methods.
+ *
+ * @author Dipta Das
+ */
+
 @Slf4j
 public class Helper {
     public static String mergePaths(String classPath, String methodPath) {
