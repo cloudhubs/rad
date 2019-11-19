@@ -25,7 +25,7 @@ public class RestFlowService {
 
         SeerRestFlowContext restFlowContext = new SeerRestFlowContext();
         restFlowContext.getRestFlows().addAll(getRestFlows(serverEntities, clientEntities));
-        // restFlowContext.getPossibleRestFlows().addAll(getPossibleRestFlows(serverEntities, clientEntities));
+        // restFlowContext.getRestFlows().addAll(getPossibleRestFlows(serverEntities, clientEntities));
 
         return restFlowContext;
     }

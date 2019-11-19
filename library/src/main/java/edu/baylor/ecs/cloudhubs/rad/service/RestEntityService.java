@@ -1,6 +1,9 @@
 package edu.baylor.ecs.cloudhubs.rad.service;
 
-import edu.baylor.ecs.cloudhubs.rad.analyzer.*;
+import edu.baylor.ecs.cloudhubs.rad.analyzer.Helper;
+import edu.baylor.ecs.cloudhubs.rad.analyzer.JaxRsAnalyzer;
+import edu.baylor.ecs.cloudhubs.rad.analyzer.SpringAnalyzer;
+import edu.baylor.ecs.cloudhubs.rad.analyzer.SpringClientAnalyzer;
 import edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext;
 import edu.baylor.ecs.cloudhubs.rad.model.HttpMethod;
 import edu.baylor.ecs.cloudhubs.rad.model.RestEntity;
@@ -17,7 +20,7 @@ public class RestEntityService {
     private final JaxRsAnalyzer jaxRsAnalyzer;
     private final SpringAnalyzer springAnalyzer;
     private final SpringClientAnalyzer springClientAnalyzer;
-    private final SpringClientWrapperAnalyzer springClientWrapperAnalyzer;
+    // private final SpringClientWrapperAnalyzer springClientWrapperAnalyzer;
 
     public SeerRestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, Properties properties) {
         SeerRestEntityContext restEntityContext = new SeerRestEntityContext();

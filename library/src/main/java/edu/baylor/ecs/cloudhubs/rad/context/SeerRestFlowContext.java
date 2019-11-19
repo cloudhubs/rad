@@ -11,5 +11,4 @@ import java.util.List;
 @ToString
 public class SeerRestFlowContext {
     private List<RestFlow> restFlows = new ArrayList<>();
-    private List<RestFlow> possibleRestFlows = new ArrayList<>();
 }
