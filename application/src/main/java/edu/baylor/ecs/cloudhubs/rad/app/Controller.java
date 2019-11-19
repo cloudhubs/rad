@@ -6,6 +6,15 @@ import edu.baylor.ecs.cloudhubs.rad.service.RestDiscoveryService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * This class defines an endpoint to accept requests to the RAD Application.
+ * It takes {@link edu.baylor.ecs.cloudhubs.rad.context.RadRequestContext} as request.
+ * And generates {@link edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext} as response.
+ * It delegates the request to {@link edu.baylor.ecs.cloudhubs.rad.service.RestDiscoveryService} for analysis/processing.
+ *
+ * @author Dipta Das
+ */
+
 @RestController
 @AllArgsConstructor
 public class Controller {
