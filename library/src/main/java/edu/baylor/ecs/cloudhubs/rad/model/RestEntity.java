@@ -24,13 +24,11 @@ public class RestEntity {
     private String returnType;
 
     private String path;
-    private List<Param> pathParams;
-    private List<Param> formParams;
-    private List<Param> queryParams;
-    private List<Param> headerParams;
-    private List<Param> cookieParams;
-    private List<Param> matrixParams;
     private HttpMethod httpMethod;
+
+    private List<Param> pathParams;
+    private List<Param> queryParams;
+
     private String consumeType; // can be any mime type
     private String produceType; // can be any mime type
 
@@ -46,12 +44,5 @@ public class RestEntity {
             queryParams = new ArrayList<>();
         }
         queryParams.add(queryParam);
-    }
-
-    public void addFormParam(Param formParam) {
-        if (formParams == null) {
-            formParams = new ArrayList<>();
-        }
-        formParams.add(formParam);
     }
 }

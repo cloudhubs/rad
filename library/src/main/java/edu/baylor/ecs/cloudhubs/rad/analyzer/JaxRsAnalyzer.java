@@ -104,7 +104,7 @@ public class JaxRsAnalyzer {
             Annotation[][] annotationsList = parameterAnnotationsAttribute.getAnnotations();
             for (Annotation[] annotations : annotationsList) {
                 String defaultValue = "";
-                Param pathParam = null, queryParam = null, formParam = null;
+                Param pathParam = null, queryParam = null;
 
                 for (Annotation annotation : annotations) {
                     String annotationType = annotation.getTypeName();
@@ -113,8 +113,6 @@ public class JaxRsAnalyzer {
                         pathParam = new Param(Helper.getAnnotationValue(annotation, "value"));
                     } else if (annotationType.equals(getJaxRsAnnotation("QueryParam"))) {
                         queryParam = new Param(Helper.getAnnotationValue(annotation, "value"));
-                    } else if (annotationType.equals(getJaxRsAnnotation("FormParam"))) {
-                        formParam = new Param(Helper.getAnnotationValue(annotation, "value"));
                     } else if (annotationType.equals(getJaxRsAnnotation("DefaultValue"))) {
                         defaultValue = Helper.getAnnotationValue(annotation, "value");
                     }
@@ -128,11 +126,6 @@ public class JaxRsAnalyzer {
                     queryParam.setDefaultValue(defaultValue);
                     restEntity.addQueryParam(queryParam);
                 }
-                if (formParam != null) {
-                    formParam.setDefaultValue(defaultValue);
-                    restEntity.addFormParam(formParam);
-                }
-                // TODO: headerParam, cookieParam, matrixParam
             }
         }
 
