@@ -128,7 +128,7 @@ $ java -jar application/target/rad-application-0.1.0.jar
 
 ### Sample request and response
 
-```bash
+```
 curl --request POST \
   --url http://localhost:8080/ \
   --header 'content-type: application/json' \
@@ -139,7 +139,7 @@ curl --request POST \
 }'
 ```
 
-```json
+```yaml
 {
   "request": {
     "pathToCompiledMicroservices": "C:\\seer-lab\\cil-tms",
