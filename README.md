@@ -1,6 +1,6 @@
 # Rest API Discovery
 
-This project discovers the rest-endpoints and rest-clients from the bytecode a microservice. Given a set of compiled microservice artifacts, it also generate a rest flow graph among those endpoints and clients.
+This project discovers the rest-endpoints and rest-clients from the bytecode of a microservice. Given a set of compiled microservice artifacts, it can also generate a rest flow graph among those endpoints and clients.
 
 
 To get started clone the Github [repository](https://github.com/cloudhubs/rad).
@@ -149,6 +149,10 @@ curl --request POST \
   }
 }
 ```
+
+### Generated graph
+
+![RAD output graph](cil-rad.gv.png)
 
 ## Integrate as library
 
