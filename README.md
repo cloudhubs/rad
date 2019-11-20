@@ -17,6 +17,19 @@ $ git clone https://github.com/cloudhubs/rad.git
 - [Apache commons](https://mvnrepository.com/artifact/org.apache.commons)
 - [Lombok](https://projectlombok.org/)
 
+## Core components
+
+1. **Analyzer:** Analyzes a `CtClass` object and detects all `RestEntity` in that class. Currently there are four different analyzer: `JaxRSAnalyzer`, `SpringEndpointAnalyzer`, `SpringClientAnalyzer`, and `SpringClientWrapperAnalyzer`.
+
+2. **Instruction scanner:** Scans the bytecode instructions of a `CtMethod` and creates a list of simplified `InstructionInfo`.
+
+3. **Dataflow:** Detects rest client method calls along with URL and return type. It takes a list of `InstructionInfo` and performs backward dataflow analysis.
+
+4. **Flow matcher:** Find pairs of server and client `RestEntity` by matching HTTP method, URL, and other properties.
+
+5. **Graph generator:** Generates a [graphviz](https://www.graphviz.org/) file to visualize rest communication between microservices. 
+
+
 ## Run the Application
 
 ### Prepare the `Local weaver` library
