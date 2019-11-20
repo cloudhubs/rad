@@ -17,6 +17,76 @@ $ git clone https://github.com/cloudhubs/rad.git
 - [Apache commons](https://mvnrepository.com/artifact/org.apache.commons)
 - [Lombok](https://projectlombok.org/)
 
+## Core Contexts and Models
+
+### Contexts
+
+```java
+public class RadRequestContext {
+    private String pathToCompiledMicroservices;
+    private String organizationPath;
+    private String outputPath;
+}
+```
+
+```java
+public class RadResponseContext {
+    private RadRequestContext request;
+    private List<SeerRestEntityContext> restEntityContexts = new ArrayList<>();
+    private SeerRestFlowContext restFlowContext;
+}
+```
+
+```java
+public class SeerRestEntityContext {
+    private String resourcePath;
+    private List<RestEntity> restEntities = new ArrayList<>();
+}
+```
+
+```java
+public class SeerRestFlowContext {
+    private List<RestFlow> restFlows = new ArrayList<>();
+}
+```
+
+### Models
+
+```java
+public class RestEntity {
+    private boolean isClient;
+
+    private String url;
+
+    private String applicationName; // used in eureka discovery
+    private String ribbonServerName;
+
+    private String resourcePath;
+    private String className;
+    private String methodName;
+    private String returnType;
+
+    private String path;
+    private HttpMethod httpMethod;
+
+    private List<Param> pathParams;
+    private List<Param> queryParams;
+
+    private String consumeType; // can be any mime type
+    private String produceType; // can be any mime type
+}
+```
+
+```java
+public class RestFlow {
+    private String resourcePath;
+    private String className;
+    private String methodName;
+
+    private List<RestEntity> servers;
+}
+```
+
 ## Run the Application
 
 ### Prepare the `Local weaver` library
@@ -58,7 +128,7 @@ $ java -jar application/target/rad-application-0.1.0.jar
 
 ### Sample request and response
 
-```
+```bash
 curl --request POST \
   --url http://localhost:8080/ \
   --header 'content-type: application/json' \
@@ -69,7 +139,7 @@ curl --request POST \
 }'
 ```
 
-```
+```json
 {
   "request": {
     "pathToCompiledMicroservices": "C:\\seer-lab\\cil-tms",
@@ -134,5 +204,36 @@ curl --request POST \
       ...
     ]
   }
+}
+```
+
+## Integrate as library
+
+### Compile the library
+
+```
+$ git clone https://github.com/cloudhubs/rad.git
+$ cd rad
+$ mvn clean install -DskipTests
+```
+
+### Add dependency to your project
+
+```xml
+<dependency>
+    <groupId>edu.baylor.ecs.cloudhubs</groupId>
+    <artifactId>rad</artifactId>
+    <version>0.1.0</version>
+</dependency>
+```
+
+### Code example
+
+```java
+@Autowired
+private final RestDiscoveryService restDiscoveryService;
+   
+public RadResponseContext getRadResponseContext(RadRequestContext request) {
+    return restDiscoveryService.generateRadResponseContext(request);
 }
 ```
