@@ -12,7 +12,7 @@
 
     <groupId>edu.baylor.ecs.cloudhubs</groupId>
     <artifactId>rad</artifactId>
-    <version>0.1.0</version>
+    <version>0.0.1</version>
     <packaging>jar</packaging>
 
     <properties>
