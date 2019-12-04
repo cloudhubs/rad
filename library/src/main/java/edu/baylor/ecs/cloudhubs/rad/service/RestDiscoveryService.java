@@ -59,7 +59,9 @@ public class RestDiscoveryService {
         SeerRestFlowContext restFlowContext = restFlowService.getRestFlowContext(radResponseContext.getRestEntityContexts());
         radResponseContext.setRestFlowContext(restFlowContext);
 
-        GVGenerator.generate(radResponseContext);
+        if (request.getOutputPath() != null) {
+            GVGenerator.generate(radResponseContext);
+        }
 
         return radResponseContext;
     }
