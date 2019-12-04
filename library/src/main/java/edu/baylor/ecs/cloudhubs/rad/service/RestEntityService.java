@@ -29,6 +29,13 @@ public class RestEntityService {
     private final SpringClientAnalyzer springClientAnalyzer;
     // private final SpringClientWrapperAnalyzer springClientWrapperAnalyzer;
 
+
+    public RestEntityService() {
+        this.jaxRsAnalyzer = new JaxRsAnalyzer();
+        this.springAnalyzer = new SpringAnalyzer();
+        this.springClientAnalyzer = new SpringClientAnalyzer();
+    }
+
     public SeerRestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, Properties properties) {
         SeerRestEntityContext restEntityContext = new SeerRestEntityContext();
         restEntityContext.setResourcePath(path);

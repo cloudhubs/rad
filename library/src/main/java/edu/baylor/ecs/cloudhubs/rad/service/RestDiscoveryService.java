@@ -8,6 +8,7 @@ import edu.baylor.ecs.cloudhubs.rad.graph.GVGenerator;
 import edu.baylor.ecs.seer.lweaver.service.ResourceService;
 import javassist.CtClass;
 import lombok.AllArgsConstructor;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,6 +28,12 @@ public class RestDiscoveryService {
     private final ResourceService resourceService;
     private final RestEntityService restEntityService;
     private final RestFlowService restFlowService;
+
+    public RestDiscoveryService() {
+        this.resourceService = new ResourceService(new DefaultResourceLoader());
+        this.restEntityService = new RestEntityService();
+        this.restFlowService = new RestFlowService();
+    }
 
     public RadResponseContext generateRadResponseContext(RadRequestContext request) {
         RadResponseContext radResponseContext = new RadResponseContext();
