@@ -65,7 +65,7 @@ public class SpringClientAnalyzer {
 
             for (RestTemplateMethod targetMethod : restTemplateMethods) {
                 try {
-                    index = LocalVariableScanner.findIndexForMethodCal(instructions, restTemplateClass + "." + targetMethod.restTemplateMethod);
+                    index = LocalVariableScanner.findIndexForMethodCall(instructions, restTemplateClass + "." + targetMethod.restTemplateMethod);
                     foundMethod = targetMethod;
                     break;
                 } catch (DataFlowException ignore) {

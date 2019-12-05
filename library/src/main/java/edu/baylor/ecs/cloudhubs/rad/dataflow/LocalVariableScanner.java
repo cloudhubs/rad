@@ -16,7 +16,7 @@ import java.util.List;
 
 public class LocalVariableScanner {
 
-    public static int findIndexForMethodCal(List<InstructionInfo> instructions, String method) throws DataFlowException {
+    public static int findIndexForMethodCall(List<InstructionInfo> instructions, String method) throws DataFlowException {
         int index = 0;
         for (InstructionInfo instruction : instructions) {
             if (instruction.getInstruction() instanceof IndexWrapper) {
