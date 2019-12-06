@@ -77,6 +77,12 @@ public class SpringClientAnalyzer {
                 continue;
             }
 
+            // determine HTTP method for exchange
+            if (foundMethod.restTemplateMethod.equals("exchange")) {
+                foundMethod.httpMethod = LocalVariableScanner.peakHttpMethodForExchange(instructions, index);
+                log.info(ctMethod.getLongName() + " exchange type " + foundMethod.httpMethod.toString());
+            }
+
             // find url
             try {
                 List<StringStackElement> stringStackElements = LocalVariableScanner.peekParamForMethodCall(

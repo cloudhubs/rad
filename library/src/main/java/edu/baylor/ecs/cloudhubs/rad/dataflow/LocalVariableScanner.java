@@ -3,6 +3,7 @@ package edu.baylor.ecs.cloudhubs.rad.dataflow;
 import edu.baylor.ecs.cloudhubs.rad.instruction.IndexWrapper;
 import edu.baylor.ecs.cloudhubs.rad.instruction.InstructionInfo;
 import edu.baylor.ecs.cloudhubs.rad.instruction.StringStackElement;
+import edu.baylor.ecs.cloudhubs.rad.model.HttpMethod;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -159,6 +160,34 @@ public class LocalVariableScanner {
             }
         }
         return null;
+    }
+
+    public static HttpMethod peakHttpMethodForExchange(List<InstructionInfo> instructions, int index) {
+        for (index = index - 1; index >= 0 && index < instructions.size(); index--) {
+            InstructionInfo instruction = instructions.get(index);
+
+            if (instruction.getOpcode().equals("getstatic") && instruction.getInstruction() instanceof IndexWrapper) {
+                IndexWrapper indexWrapper = (IndexWrapper) instruction.getInstruction();
+
+                if (indexWrapper.getType().equals("Field")) {
+                    String value = (String) indexWrapper.getValue();
+
+                    if (value.startsWith("org.springframework.http.HttpMethod")) {
+                        if (value.contains("POST")) {
+                            return HttpMethod.POST;
+                        } else if (value.contains("PUT")) {
+                            return HttpMethod.PUT;
+                        } else if (value.contains("DELETE")) {
+                            return HttpMethod.DELETE;
+                        } else {
+                            return HttpMethod.GET; // default
+                        }
+                    }
+                }
+            }
+        }
+
+        return HttpMethod.GET; // default
     }
 
     public static int peekImmediateStoreIndex(List<InstructionInfo> instructions, int index, int pointer) throws DataFlowException {
