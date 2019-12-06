@@ -66,7 +66,7 @@ $ cd ../tms-qms && mvn clean install -DskipTests
 $ git clone https://github.com/cloudhubs/rad.git
 $ cd rad
 $ mvn clean install -DskipTests
-$ java -jar application/target/rad-application-0.0.1.jar
+$ java -jar application/target/rad-application-0.0.5.jar
 ```
 
 ### Sample request and response
@@ -170,7 +170,7 @@ $ mvn clean install -DskipTests
 <dependency>
     <groupId>edu.baylor.ecs.cloudhubs</groupId>
     <artifactId>rad</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
