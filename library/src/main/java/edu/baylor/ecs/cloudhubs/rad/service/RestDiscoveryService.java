@@ -1,9 +1,9 @@
 package edu.baylor.ecs.cloudhubs.rad.service;
 
-import edu.baylor.ecs.cloudhubs.rad.context.RadRequestContext;
-import edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext;
-import edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext;
-import edu.baylor.ecs.cloudhubs.rad.context.SeerRestFlowContext;
+import edu.baylor.ecs.cloudhubs.rad.context.RequestContext;
+import edu.baylor.ecs.cloudhubs.rad.context.ResponseContext;
+import edu.baylor.ecs.cloudhubs.rad.context.RestEntityContext;
+import edu.baylor.ecs.cloudhubs.rad.context.RestFlowContext;
 import edu.baylor.ecs.cloudhubs.rad.graph.GVGenerator;
 import javassist.CtClass;
 import lombok.AllArgsConstructor;
@@ -15,8 +15,8 @@ import java.util.Properties;
 import java.util.Set;
 
 /**
- * This class constructs a {@link edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext}.
- * It takes a {@link edu.baylor.ecs.cloudhubs.rad.context.RadRequestContext} as input.
+ * This class constructs a {@link ResponseContext}.
+ * It takes a {@link RequestContext} as input.
  *
  * @author Dipta Das
  */
@@ -34,9 +34,9 @@ public class RestDiscoveryService {
         this.restFlowService = new RestFlowService();
     }
 
-    public RadResponseContext generateRadResponseContext(RadRequestContext request) {
-        RadResponseContext radResponseContext = new RadResponseContext();
-        radResponseContext.setRequest(request);
+    public ResponseContext generateResponseContext(RequestContext request) {
+        ResponseContext responseContext = new ResponseContext();
+        responseContext.setRequest(request);
 
         List<String> resourcePaths = resourceService.getResourcePaths(request.getPathToCompiledMicroservices());
         for (String path : resourcePaths) {
@@ -51,17 +51,17 @@ public class RestDiscoveryService {
             // print the properties for debug
             // Helper.dumpProperties(properties, path);
 
-            SeerRestEntityContext restEntityContext = restEntityService.getRestEntityContext(ctClasses, path, properties);
-            radResponseContext.getRestEntityContexts().add(restEntityContext);
+            RestEntityContext restEntityContext = restEntityService.getRestEntityContext(ctClasses, path, properties);
+            responseContext.getRestEntityContexts().add(restEntityContext);
         }
 
-        SeerRestFlowContext restFlowContext = restFlowService.getRestFlowContext(radResponseContext.getRestEntityContexts());
-        radResponseContext.setRestFlowContext(restFlowContext);
+        RestFlowContext restFlowContext = restFlowService.getRestFlowContext(responseContext.getRestEntityContexts());
+        responseContext.setRestFlowContext(restFlowContext);
 
         if (request.getOutputPath() != null) {
-            GVGenerator.generate(radResponseContext);
+            GVGenerator.generate(responseContext);
         }
 
-        return radResponseContext;
+        return responseContext;
     }
 }

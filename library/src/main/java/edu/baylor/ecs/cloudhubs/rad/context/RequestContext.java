@@ -17,7 +17,7 @@ import lombok.ToString;
 @Setter
 @ToString
 @AllArgsConstructor
-public class RadRequestContext {
+public class RequestContext {
     private String pathToCompiledMicroservices;
     private String organizationPath;
     private String outputPath;

@@ -1,6 +1,6 @@
 package edu.baylor.ecs.cloudhubs.rad.graph;
 
-import edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext;
+import edu.baylor.ecs.cloudhubs.rad.context.ResponseContext;
 import edu.baylor.ecs.cloudhubs.rad.model.RestEntity;
 import edu.baylor.ecs.cloudhubs.rad.model.RestFlow;
 
@@ -12,14 +12,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * This class generates a Graphviz file from {@link edu.baylor.ecs.cloudhubs.rad.context.RadResponseContext}.
+ * This class generates a Graphviz file from {@link ResponseContext}.
  * The Graphviz file visualizes the rest flows among the microservices.
  *
  * @author Dipta Das
  */
 
 public class GVGenerator {
-    public static void generate(RadResponseContext radResponseContext) {
+    public static void generate(ResponseContext responseContext) {
         StringBuilder graph = new StringBuilder();
         graph.append("digraph cil_rad {").append("\n");
         graph.append("rankdir = LR;").append("\n");
@@ -27,7 +27,7 @@ public class GVGenerator {
 
         int clusterIndex = 0;
 
-        Map<String, Set<String>> clusters = getClusters(radResponseContext);
+        Map<String, Set<String>> clusters = getClusters(responseContext);
 
         for (String key : clusters.keySet()) {
             StringBuilder cluster = new StringBuilder();
@@ -47,7 +47,7 @@ public class GVGenerator {
             graph.append(cluster);
         }
 
-        for (RestFlow restFlow : radResponseContext.getRestFlowContext().getRestFlows()) {
+        for (RestFlow restFlow : responseContext.getRestFlowContext().getRestFlows()) {
             String nodeFrom = getFullMethodName(restFlow);
 
             for (RestEntity server : restFlow.getServers()) {
@@ -61,17 +61,17 @@ public class GVGenerator {
 
         graph.append("}");
 
-        try (PrintWriter out = new PrintWriter(radResponseContext.getRequest().getOutputPath())) {
+        try (PrintWriter out = new PrintWriter(responseContext.getRequest().getOutputPath())) {
             out.println(graph);
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    private static Map<String, Set<String>> getClusters(RadResponseContext radResponseContext) {
+    private static Map<String, Set<String>> getClusters(ResponseContext responseContext) {
         Map<String, Set<String>> clusters = new HashMap<>();
 
-        for (RestFlow restFlow : radResponseContext.getRestFlowContext().getRestFlows()) {
+        for (RestFlow restFlow : responseContext.getRestFlowContext().getRestFlows()) {
             String nodeFrom = getFullMethodName(restFlow);
             addToMap(clusters, addDoubleQuotations(restFlow.getResourcePath()), nodeFrom);
 

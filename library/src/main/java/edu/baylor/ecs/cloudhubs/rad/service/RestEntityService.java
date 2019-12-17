@@ -4,7 +4,7 @@ import edu.baylor.ecs.cloudhubs.rad.analyzer.Helper;
 import edu.baylor.ecs.cloudhubs.rad.analyzer.JaxRsAnalyzer;
 import edu.baylor.ecs.cloudhubs.rad.analyzer.SpringAnalyzer;
 import edu.baylor.ecs.cloudhubs.rad.analyzer.SpringClientAnalyzer;
-import edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext;
+import edu.baylor.ecs.cloudhubs.rad.context.RestEntityContext;
 import edu.baylor.ecs.cloudhubs.rad.model.HttpMethod;
 import edu.baylor.ecs.cloudhubs.rad.model.RestEntity;
 import javassist.CtClass;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * This class constructs a {@link edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext}.
+ * This class constructs a {@link RestEntityContext}.
  * It takes a list of JavaAssist CtClass as input.
  *
  * @author Dipta Das
@@ -36,8 +36,8 @@ public class RestEntityService {
         this.springClientAnalyzer = new SpringClientAnalyzer();
     }
 
-    public SeerRestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, Properties properties) {
-        SeerRestEntityContext restEntityContext = new SeerRestEntityContext();
+    public RestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, Properties properties) {
+        RestEntityContext restEntityContext = new RestEntityContext();
         restEntityContext.setResourcePath(path);
 
         for (CtClass ctClass : allClasses) {

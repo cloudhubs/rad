@@ -76,28 +76,28 @@ curl --request POST \
   --url http://localhost:8080/ \
   --header 'content-type: application/json' \
   --data '{
-    "pathToCompiledMicroservices":"C:\\seer-lab\\cil-tms",
+    "pathToCompiledMicroservices":"C:\\baylor\\cil-tms",
     "organizationPath":"edu/baylor/ecs",
-    "outputPath":"C:\\seer-lab\\cil-rad.gv"
+    "outputPath":"C:\\baylor\\cil-rad.gv"
 }'
 ```
 
 ```yaml
 {
   "request": {
-    "pathToCompiledMicroservices": "C:\\seer-lab\\cil-tms",
+    "pathToCompiledMicroservices": "C:\\baylor\\cil-tms",
     "organizationPath": "edu/baylor/ecs",
-    "outputPath": "C:\\seer-lab\\cil-rad.gv"
+    "outputPath": "C:\\baylor\\cil-rad.gv"
   },
   "restEntityContexts": [
     {
-      "resourcePath": "C:\\seer-lab\\cil-tms\\tms-cms\\target\\cms-0.0.1-SNAPSHOT.jar",
+      "resourcePath": "C:\\baylor\\cil-tms\\tms-cms\\target\\cms-0.0.1-SNAPSHOT.jar",
       "restEntities": [
         {
           "url": "http://localhost:10003/categoryInfo",
           "applicationName": null,
           "ribbonServerName": null,
-          "resourcePath": "C:\\seer-lab\\cil-tms\\tms-cms\\target\\cms-0.0.1-SNAPSHOT.jar",
+          "resourcePath": "C:\\baylor\\cil-tms\\tms-cms\\target\\cms-0.0.1-SNAPSHOT.jar",
           "className": "edu.baylor.ecs.cms.controller.CategoryInfoController",
           "methodName": "getCategoryInfo",
           "returnType": "java.util.List<java.lang.Object>",
@@ -117,7 +117,7 @@ curl --request POST \
   "restFlowContext": {
     "restFlows": [
       {
-        "resourcePath": "C:\\seer-lab\\cil-tms\\tms-cms\\target\\cms-0.0.1-SNAPSHOT.jar",
+        "resourcePath": "C:\\baylor\\cil-tms\\tms-cms\\target\\cms-0.0.1-SNAPSHOT.jar",
         "className": "edu.baylor.ecs.cms.service.UmsService",
         "methodName": "isEmailValid",
         "servers": [
@@ -125,7 +125,7 @@ curl --request POST \
             "url": "http://localhost:9004/userinfo/emailInUse/{email}",
             "applicationName": null,
             "ribbonServerName": null,
-            "resourcePath": "C:\\seer-lab\\cil-tms\\tms-ums\\target\\ums-1.0-SNAPSHOT.jar",
+            "resourcePath": "C:\\baylor\\cil-tms\\tms-ums\\target\\ums-1.0-SNAPSHOT.jar",
             "className": "edu.baylor.ecs.ums.controller.UserInfoController",
             "methodName": "isEmailInUse",
             "returnType": null,
@@ -180,8 +180,8 @@ $ mvn clean install -DskipTests
 @Autowired
 private final RestDiscoveryService restDiscoveryService;
    
-public RadResponseContext getRadResponseContext(RadRequestContext request) {
-    return restDiscoveryService.generateRadResponseContext(request);
+public ResponseContext getRadResponseContext(RequestContext request) {
+    return restDiscoveryService.generateResponseContext(request);
 }
 ```
 
@@ -190,7 +190,7 @@ public RadResponseContext getRadResponseContext(RadRequestContext request) {
 ### Contexts
 
 ```java
-public class RadRequestContext {
+public class RequestContext {
     private String pathToCompiledMicroservices;
     private String organizationPath;
     private String outputPath;
@@ -198,22 +198,22 @@ public class RadRequestContext {
 ```
 
 ```java
-public class RadResponseContext {
-    private RadRequestContext request;
-    private List<SeerRestEntityContext> restEntityContexts = new ArrayList<>();
-    private SeerRestFlowContext restFlowContext;
+public class ResponseContext {
+    private RequestContext request;
+    private List<RestEntityContext> restEntityContexts = new ArrayList<>();
+    private RestFlowContext restFlowContext;
 }
 ```
 
 ```java
-public class SeerRestEntityContext {
+public class RestEntityContext {
     private String resourcePath;
     private List<RestEntity> restEntities = new ArrayList<>();
 }
 ```
 
 ```java
-public class SeerRestFlowContext {
+public class RestFlowContext {
     private List<RestFlow> restFlows = new ArrayList<>();
 }
 ```

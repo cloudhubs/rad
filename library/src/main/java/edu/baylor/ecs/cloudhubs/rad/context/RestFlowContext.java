@@ -16,6 +16,6 @@ import java.util.List;
 
 @Getter
 @ToString
-public class SeerRestFlowContext {
+public class RestFlowContext {
     private List<RestFlow> restFlows = new ArrayList<>();
 }

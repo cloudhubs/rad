@@ -18,7 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 @ToString
-public class SeerRestEntityContext {
+public class RestEntityContext {
     private String resourcePath;
     private List<RestEntity> restEntities = new ArrayList<>();
 }
