@@ -13,9 +13,9 @@
     </properties>
 
     <modules>
+        <module>sample</module>
         <module>library</module>
         <module>application</module>
-        <module>sample</module>
     </modules>
 
 </project>
