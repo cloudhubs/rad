@@ -9,7 +9,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @author Dipta Das
  */
 
-@SpringBootApplication(scanBasePackages = {"edu.baylor.ecs.cloudhubs.rad", "edu.baylor.ecs.seer.lweaver.service"})
+@SpringBootApplication(scanBasePackages = {"edu.baylor.ecs.cloudhubs.rad"})
 public class RadApplication {
 
     public static void main(String[] args) {
