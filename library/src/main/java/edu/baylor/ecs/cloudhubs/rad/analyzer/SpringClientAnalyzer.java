@@ -46,6 +46,7 @@ public class SpringClientAnalyzer {
             new RestTemplateMethod("getForEntity", HttpMethod.GET, 2),
             new RestTemplateMethod("exchange", HttpMethod.GET, 3),
             new RestTemplateMethod("postForObject", HttpMethod.POST, 3),
+            new RestTemplateMethod("postForEntity", HttpMethod.POST, 3),
             new RestTemplateMethod("delete", HttpMethod.DELETE, 1),
     };
 
