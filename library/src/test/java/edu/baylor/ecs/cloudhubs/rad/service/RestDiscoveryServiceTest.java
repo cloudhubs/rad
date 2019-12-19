@@ -17,18 +17,27 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class RestDiscoveryServiceTest {
 
     private List<RestEntity> expectedRestEndpoints = Arrays.asList(
-            getExpectedRestEndpoint("doGetMapping", HttpMethod.GET, "SampleModel"),
-            getExpectedRestEndpoint("doRequestMappingGet", HttpMethod.GET, "SampleModel"),
-            getExpectedRestEndpoint("doPostMapping", HttpMethod.POST, "SampleModel"),
-            getExpectedRestEndpoint("doRequestMappingPost", HttpMethod.POST, "SampleModel")
+            getExpectedRestEntity("doGetMapping", HttpMethod.GET, "SampleModel", false),
+            getExpectedRestEntity("doRequestMappingGet", HttpMethod.GET, "SampleModel", false),
+            getExpectedRestEntity("doPostMapping", HttpMethod.POST, "SampleModel", false),
+            getExpectedRestEntity("doRequestMappingPost", HttpMethod.POST, "SampleModel", false)
     );
 
-    private RestEntity getExpectedRestEndpoint(String methodName, HttpMethod httpMethod, String returnType) {
+    private List<RestEntity> expectedRestCalls = Arrays.asList(
+            getExpectedRestEntity("doGetForObject", HttpMethod.GET, "SampleModel", true),
+            getExpectedRestEntity("doGetForEntity", HttpMethod.GET, "SampleModel", true),
+            getExpectedRestEntity("doExchangeGet", HttpMethod.GET, "SampleModel", true),
+            getExpectedRestEntity("doPostForObject", HttpMethod.POST, "SampleModel", true),
+            getExpectedRestEntity("doPostForEntity", HttpMethod.POST, "SampleModel", true),
+            getExpectedRestEntity("doExchangePost", HttpMethod.POST, "SampleModel", true)
+    );
+
+    private RestEntity getExpectedRestEntity(String methodName, HttpMethod httpMethod, String returnType, boolean isClient) {
         RestEntity restEntity = new RestEntity();
         restEntity.setMethodName(methodName);
         restEntity.setHttpMethod(httpMethod);
         restEntity.setReturnType(returnType);
-        restEntity.setClient(false);
+        restEntity.setClient(isClient);
         return restEntity;
     }
 
@@ -60,5 +69,20 @@ class RestDiscoveryServiceTest {
         }
 
         assertEquals(countEndpoints, 4);
+
+        int countRestCalls = 0;
+
+        for (RestEntity restEntity : responseContext.getRestEntityContexts().get(0).getRestEntities()) {
+            for (RestEntity expectedRestCalls : expectedRestCalls) {
+                if (restEntity.getMethodName().equals(expectedRestCalls.getMethodName())) {
+                    assertEquals(restEntity.getHttpMethod(), expectedRestCalls.getHttpMethod());
+                    assertTrue(restEntity.getReturnType().contains(expectedRestCalls.getReturnType()));
+                    assertEquals(restEntity.isClient(), expectedRestCalls.isClient());
+                    countRestCalls++;
+                }
+            }
+        }
+
+        assertEquals(countRestCalls, 6);
     }
 }
