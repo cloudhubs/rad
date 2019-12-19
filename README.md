@@ -13,7 +13,6 @@ $ git clone https://github.com/cloudhubs/rad.git
 
 - [Spring boot](https://spring.io/projects/spring-boot)
 - [Javassist](https://github.com/jboss-javassist/javassist)
-- [Local weaver](https://bitbucket.org/cilab/local-weaver/src/master/) (`rest` branch)
 - [Apache commons](https://mvnrepository.com/artifact/org.apache.commons)
 - [Lombok](https://projectlombok.org/)
 
