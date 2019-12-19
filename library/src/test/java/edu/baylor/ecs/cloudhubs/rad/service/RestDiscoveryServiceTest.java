@@ -31,7 +31,9 @@ class RestDiscoveryServiceTest {
             getExpectedRestEntity("doExchangeGet", HttpMethod.GET, "SampleModel", true),
             getExpectedRestEntity("doPostForObject", HttpMethod.POST, "SampleModel", true),
             getExpectedRestEntity("doPostForEntity", HttpMethod.POST, "SampleModel", true),
-            getExpectedRestEntity("doExchangePost", HttpMethod.POST, "SampleModel", true)
+            getExpectedRestEntity("doExchangePost", HttpMethod.POST, "SampleModel", true),
+            getExpectedRestEntity("doDelete", HttpMethod.DELETE, "void", true),
+            getExpectedRestEntity("doDeleteRequestMapping", HttpMethod.DELETE, "void", true)
     );
 
     private RestEntity getExpectedRestEntity(String methodName, HttpMethod httpMethod, String returnType, boolean isClient) {
@@ -54,8 +56,8 @@ class RestDiscoveryServiceTest {
 
         ResponseContext responseContext = restDiscoveryService.generateResponseContext(requestContext);
         assertEquals(responseContext.getRestEntityContexts().size(), 1);
-        assertEquals(responseContext.getRestEntityContexts().get(0).getRestEntities().size(), 12); // client + server
-        assertEquals(responseContext.getRestFlowContext().getRestFlows().size(), 6);
+        assertEquals(responseContext.getRestEntityContexts().get(0).getRestEntities().size(), 14); // client + server
+        assertEquals(responseContext.getRestFlowContext().getRestFlows().size(), 8);
 
         int countEndpoints = 0;
 
@@ -85,6 +87,6 @@ class RestDiscoveryServiceTest {
             }
         }
 
-        assertEquals(countRestCalls, 6);
+        assertEquals(countRestCalls, 8);
     }
 }

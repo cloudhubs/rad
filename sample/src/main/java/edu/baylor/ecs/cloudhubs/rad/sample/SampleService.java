@@ -38,4 +38,11 @@ public class SampleService {
         return restTemplate.exchange(url + "/post-mapping", HttpMethod.POST, null, SampleModel.class, sampleModel).getBody();
     }
 
+    public void doDelete(Long id) {
+        restTemplate.delete(url + "/delete-mapping/" + id);
+    }
+
+    public void doDeleteRequestMapping(Long id) {
+        restTemplate.delete(url + "/request-mapping-delete/" + id);
+    }
 }

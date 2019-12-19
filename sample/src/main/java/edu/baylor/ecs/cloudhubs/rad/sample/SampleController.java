@@ -25,11 +25,11 @@ public class SampleController {
         return sampleModel;
     }
 
-    @DeleteMapping("/delete-mapping")
-    public void doDeleteMapping() {
+    @DeleteMapping("/delete-mapping/{id}")
+    public void doDeleteMapping(@PathVariable String id) {
     }
 
-    @RequestMapping(value = "/request-mapping-delete", method = RequestMethod.DELETE)
-    public void doRequestMappingDelete() {
+    @RequestMapping(value = "/request-mapping-delete/{id}", method = RequestMethod.DELETE)
+    public void doRequestMappingDelete(@PathVariable String id) {
     }
 }
