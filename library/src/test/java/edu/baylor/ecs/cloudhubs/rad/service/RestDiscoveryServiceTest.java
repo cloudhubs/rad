@@ -20,7 +20,9 @@ class RestDiscoveryServiceTest {
             getExpectedRestEntity("doGetMapping", HttpMethod.GET, "SampleModel", false),
             getExpectedRestEntity("doRequestMappingGet", HttpMethod.GET, "SampleModel", false),
             getExpectedRestEntity("doPostMapping", HttpMethod.POST, "SampleModel", false),
-            getExpectedRestEntity("doRequestMappingPost", HttpMethod.POST, "SampleModel", false)
+            getExpectedRestEntity("doRequestMappingPost", HttpMethod.POST, "SampleModel", false),
+            getExpectedRestEntity("doDeleteMapping", HttpMethod.DELETE, "void", false),
+            getExpectedRestEntity("doRequestMappingDelete", HttpMethod.DELETE, "void", false)
     );
 
     private List<RestEntity> expectedRestCalls = Arrays.asList(
@@ -52,7 +54,7 @@ class RestDiscoveryServiceTest {
 
         ResponseContext responseContext = restDiscoveryService.generateResponseContext(requestContext);
         assertEquals(responseContext.getRestEntityContexts().size(), 1);
-        assertEquals(responseContext.getRestEntityContexts().get(0).getRestEntities().size(), 10); // client + server
+        assertEquals(responseContext.getRestEntityContexts().get(0).getRestEntities().size(), 12); // client + server
         assertEquals(responseContext.getRestFlowContext().getRestFlows().size(), 6);
 
         int countEndpoints = 0;
@@ -68,7 +70,7 @@ class RestDiscoveryServiceTest {
             }
         }
 
-        assertEquals(countEndpoints, 4);
+        assertEquals(countEndpoints, 6);
 
         int countRestCalls = 0;
 
