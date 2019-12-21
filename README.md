@@ -31,15 +31,6 @@ $ git clone https://github.com/cloudhubs/rad.git
 
 ## Run the Application
 
-### Prepare the `Local weaver` library
-
-```
-$ git clone https://{username}@bitbucket.org/cilab/local-weaver.git
-$ cd local-weaver
-$ git checkout rest
-$ mvn clean install -DskipTests
-```
-
 ### Prepare the test bed 
 
 We will use [CIL-TMS](https://bitbucket.org/cilab/cil-tms/src/master/) (`rad` branch) as our test bed.
