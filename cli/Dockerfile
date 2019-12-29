@@ -21,7 +21,7 @@ ENV JAVA_ALPINE_VERSION 8.111.14-r0
 
 RUN set -x && apk add --no-cache openjdk8 && [ "$JAVA_HOME" = "$(docker-java-home)" ]
 
-ADD rad-cli-0.0.5.jar rad-cli.jar
+ADD target/rad-cli-0.0.5.jar rad-cli.jar
 ADD extract.sh .
 CMD chmod +x extract.sh
 
