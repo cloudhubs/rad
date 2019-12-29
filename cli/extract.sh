@@ -1,6 +1,6 @@
 mkdir target
 
-docker create -ti --name dummy diptadas/rad-sample bash
+docker create -ti --name dummy ${TARGET_IMAGE} bash
 docker cp dummy:/rad-sample.jar target/rad-sample.jar
 docker rm -f dummy
 

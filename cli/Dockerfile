@@ -25,9 +25,11 @@ ADD target/rad-cli-0.0.5.jar rad-cli.jar
 ADD extract.sh .
 CMD chmod +x extract.sh
 
+RUN cat extract.sh
+
 ENTRYPOINT /extract.sh
 
 # docker build -t diptadas/rad-cli .
 # docker push diptadas/rad-cli
-# docker run -ti -v /var/run/docker.sock:/var/run/docker.sock diptadas/rad-cli
+# docker run -ti -e TARGET_IMAGE=diptadas/rad-sample -v /var/run/docker.sock:/var/run/docker.sock diptadas/rad-cli
 
