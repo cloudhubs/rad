@@ -64,4 +64,17 @@ public class RestDiscoveryService {
 
         return responseContext;
     }
+
+    // rest entities for single jar
+    public RestEntityContext generateRestEntityContext(RequestContext request) {
+        List<CtClass> ctClasses = resourceService.getCtClasses(request.getPathToCompiledMicroservices(), request.getOrganizationPath());
+
+        Set<Properties> propertiesSet = resourceService.getProperties(request.getPathToCompiledMicroservices(), request.getOrganizationPath());
+        Properties properties;
+        if (propertiesSet.size() > 0) {
+            properties = propertiesSet.iterator().next();
+        } else properties = null;
+
+        return restEntityService.getRestEntityContext(ctClasses, request.getPathToCompiledMicroservices(), properties);
+    }
 }
