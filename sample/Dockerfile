@@ -1,6 +1,6 @@
 FROM openjdk:8-jdk-alpine
 
-ARG JAR_FILE=rad-sample-0.0.5.jar
+ARG JAR_FILE=target/rad-sample-0.0.5.jar
 
 ADD ${JAR_FILE} rad-sample.jar
 
