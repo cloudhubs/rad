@@ -36,7 +36,7 @@ public class RestEntityService {
         this.springClientAnalyzer = new SpringClientAnalyzer();
     }
 
-    public RestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, Properties properties) {
+    public RestEntityContext getRestEntityContext(List<CtClass> allClasses, String path, String serviceDNS, Properties properties) {
         RestEntityContext restEntityContext = new RestEntityContext();
         restEntityContext.setResourcePath(path);
 
@@ -48,13 +48,13 @@ public class RestEntityService {
         }
 
         for (RestEntity restEntity : restEntityContext.getRestEntities()) {
-            populateDefaultProperties(restEntity, path, properties);
+            populateDefaultProperties(restEntity, path, serviceDNS, properties);
         }
 
         return restEntityContext;
     }
 
-    private void populateDefaultProperties(RestEntity restEntity, String path, Properties properties) {
+    private void populateDefaultProperties(RestEntity restEntity, String path, String serviceDNS, Properties properties) {
         restEntity.setResourcePath(path);
         if (restEntity.getPath() == null) {
             restEntity.setPath("/");
@@ -67,7 +67,10 @@ public class RestEntityService {
         restEntity.setApplicationName(findApplicationNameProperties(properties));
 
         // find serverIP and port
-        String serverIP = "http://localhost"; // TODO
+        String serverIP = "http://localhost";
+        if (serviceDNS != null) {
+            serverIP = "http://" + serviceDNS;
+        }
         String serverPort = findPortFromProperties(properties);
 
         if (!restEntity.isClient()) { // set server ip and port

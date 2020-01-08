@@ -51,7 +51,7 @@ public class RestDiscoveryService {
             // print the properties for debug
             // Helper.dumpProperties(properties, path);
 
-            RestEntityContext restEntityContext = restEntityService.getRestEntityContext(ctClasses, path, properties);
+            RestEntityContext restEntityContext = restEntityService.getRestEntityContext(ctClasses, path, null, properties);
             responseContext.getRestEntityContexts().add(restEntityContext);
         }
 
@@ -66,7 +66,7 @@ public class RestDiscoveryService {
     }
 
     // rest entities for single jar
-    public RestEntityContext generateRestEntityContext(RequestContext request) {
+    public RestEntityContext generateRestEntityContext(RequestContext request, String serviceDNS) {
         List<CtClass> ctClasses = resourceService.getCtClasses(request.getPathToCompiledMicroservices(), request.getOrganizationPath());
 
         Set<Properties> propertiesSet = resourceService.getProperties(request.getPathToCompiledMicroservices(), request.getOrganizationPath());
@@ -75,6 +75,6 @@ public class RestDiscoveryService {
             properties = propertiesSet.iterator().next();
         } else properties = null;
 
-        return restEntityService.getRestEntityContext(ctClasses, request.getPathToCompiledMicroservices(), properties);
+        return restEntityService.getRestEntityContext(ctClasses, request.getPathToCompiledMicroservices(), serviceDNS, properties);
     }
 }
