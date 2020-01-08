@@ -67,9 +67,12 @@ public class RestEntityService {
         restEntity.setApplicationName(findApplicationNameProperties(properties));
 
         // find serverIP and port
+        // priority order: serviceDNS > application name > localhost
         String serverIP = "http://localhost";
         if (serviceDNS != null) {
-            serverIP = "http://" + serviceDNS;
+            serverIP = "http://" + serviceDNS; // kubernetes
+        } else if (restEntity.getApplicationName() != null) {
+            serverIP = "http://" + restEntity.getApplicationName(); // ribbon
         }
         String serverPort = findPortFromProperties(properties);
 

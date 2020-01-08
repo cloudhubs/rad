@@ -70,8 +70,9 @@ public class RestFlowService {
                     // narrow down, match server name if specified
                     String serverName = restClientEntity.getRibbonServerName();
                     String applicationName = restServerEntity.getApplicationName();
-                    if (serverName != null && !serverName.equals(applicationName))
+                    if (serverName != null && !serverName.equals(applicationName)) {
                         continue;
+                    }
 
                     createRestFlow(restFlows, restServerEntity, restClientEntity);
                 }
