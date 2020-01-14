@@ -13,8 +13,10 @@
     </properties>
 
     <modules>
+        <module>sample</module>
         <module>library</module>
         <module>application</module>
+        <module>cli</module>
     </modules>
 
 </project>

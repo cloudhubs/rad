@@ -1,8 +1,8 @@
 package edu.baylor.ecs.cloudhubs.rad.service;
 
 import edu.baylor.ecs.cloudhubs.rad.analyzer.Helper;
-import edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext;
-import edu.baylor.ecs.cloudhubs.rad.context.SeerRestFlowContext;
+import edu.baylor.ecs.cloudhubs.rad.context.RestEntityContext;
+import edu.baylor.ecs.cloudhubs.rad.context.RestFlowContext;
 import edu.baylor.ecs.cloudhubs.rad.model.RestEntity;
 import edu.baylor.ecs.cloudhubs.rad.model.RestFlow;
 import org.springframework.stereotype.Service;
@@ -11,8 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This class constructs a {@link edu.baylor.ecs.cloudhubs.rad.context.SeerRestFlowContext}.
- * It takes a list of {@link edu.baylor.ecs.cloudhubs.rad.context.SeerRestEntityContext} as input.
+ * This class constructs a {@link RestFlowContext}.
+ * It takes a list of {@link RestEntityContext} as input.
  * It matches client entities with server entities based on url and other properties.
  *
  * @author Dipta Das
@@ -20,18 +20,18 @@ import java.util.List;
 
 @Service
 public class RestFlowService {
-    public SeerRestFlowContext getRestFlowContext(List<SeerRestEntityContext> restEntityContexts) {
+    public RestFlowContext getRestFlowContext(List<RestEntityContext> restEntityContexts) {
         List<RestEntity> serverEntities = new ArrayList<>();
         List<RestEntity> clientEntities = new ArrayList<>();
 
-        for (SeerRestEntityContext restEntityContext : restEntityContexts) {
+        for (RestEntityContext restEntityContext : restEntityContexts) {
             for (RestEntity restEntity : restEntityContext.getRestEntities()) {
                 if (restEntity.isClient()) clientEntities.add(restEntity);
                 else serverEntities.add(restEntity);
             }
         }
 
-        SeerRestFlowContext restFlowContext = new SeerRestFlowContext();
+        RestFlowContext restFlowContext = new RestFlowContext();
         restFlowContext.getRestFlows().addAll(getRestFlows(serverEntities, clientEntities));
         // restFlowContext.getRestFlows().addAll(getPossibleRestFlows(serverEntities, clientEntities));
 
@@ -70,8 +70,9 @@ public class RestFlowService {
                     // narrow down, match server name if specified
                     String serverName = restClientEntity.getRibbonServerName();
                     String applicationName = restServerEntity.getApplicationName();
-                    if (serverName != null && !serverName.equals(applicationName))
+                    if (serverName != null && !serverName.equals(applicationName)) {
                         continue;
+                    }
 
                     createRestFlow(restFlows, restServerEntity, restClientEntity);
                 }
