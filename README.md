@@ -33,21 +33,11 @@ $ git clone https://github.com/cloudhubs/rad.git
 
 ### Prepare the test bed 
 
-We will use [CIL-TMS](https://bitbucket.org/cilab/cil-tms/src/master/) (`rad` branch) as our test bed.
-
+We will use a fork of [TMS](https://github.com/cloudhubs/tms-testbed) as our test bed. Clone and package each microservice into JARs.
 ```
-$ git clone https://{username}@bitbucket.org/cilab/cil-tms.git
-$ cd cil-tms
-$ git checkout rad
-```
-
-Package each microservice.
-
-```
-$ cd tms-cms && mvn clean install -DskipTests
-$ cd ../tms-ems && mvn clean install -DskipTests
-$ cd ../tms-qms && mvn clean install -DskipTests
-$ cd ../tms-qms && mvn clean install -DskipTests
+$ git clone https://github.com/cloudhubs/tms-testbed.git
+$ cd tms-testbed
+$ ./buildAll.sh
 ```
 
 ### Compile and run the application
