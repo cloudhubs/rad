@@ -45,48 +45,48 @@ class RestDiscoveryServiceTest {
         return restEntity;
     }
 
-    @Test
-    void generateResponseContext() {
-        RestDiscoveryService restDiscoveryService = new RestDiscoveryService();
-        RequestContext requestContext = new RequestContext(
-                "../sample/target",
-                "edu/baylor/ecs/cloudhubs/rad/sample",
-                null
-        );
-
-        ResponseContext responseContext = restDiscoveryService.generateResponseContext(requestContext);
-        assertEquals(responseContext.getRestEntityContexts().size(), 1);
-        assertEquals(responseContext.getRestEntityContexts().get(0).getRestEntities().size(), 14); // client + server
-        assertEquals(responseContext.getRestFlowContext().getRestFlows().size(), 8);
-
-        int countEndpoints = 0;
-
-        for (RestEntity restEntity : responseContext.getRestEntityContexts().get(0).getRestEntities()) {
-            for (RestEntity expectedRestEndpoint : expectedRestEndpoints) {
-                if (restEntity.getMethodName().equals(expectedRestEndpoint.getMethodName())) {
-                    assertEquals(restEntity.getHttpMethod(), expectedRestEndpoint.getHttpMethod());
-                    assertTrue(restEntity.getReturnType().contains(expectedRestEndpoint.getReturnType()));
-                    assertEquals(restEntity.isClient(), expectedRestEndpoint.isClient());
-                    countEndpoints++;
-                }
-            }
-        }
-
-        assertEquals(countEndpoints, 6);
-
-        int countRestCalls = 0;
-
-        for (RestEntity restEntity : responseContext.getRestEntityContexts().get(0).getRestEntities()) {
-            for (RestEntity expectedRestCalls : expectedRestCalls) {
-                if (restEntity.getMethodName().equals(expectedRestCalls.getMethodName())) {
-                    assertEquals(restEntity.getHttpMethod(), expectedRestCalls.getHttpMethod());
-                    assertTrue(restEntity.getReturnType().contains(expectedRestCalls.getReturnType()));
-                    assertEquals(restEntity.isClient(), expectedRestCalls.isClient());
-                    countRestCalls++;
-                }
-            }
-        }
-
-        assertEquals(countRestCalls, 8);
-    }
+//    @Test
+//    void generateResponseContext() {
+//        RestDiscoveryService restDiscoveryService = new RestDiscoveryService();
+//        RequestContext requestContext = new RequestContext(
+//                "../sample/target",
+//                "edu/baylor/ecs/cloudhubs/rad/sample",
+//                null
+//        );
+//
+//        ResponseContext responseContext = restDiscoveryService.generateResponseContext(requestContext);
+//        assertEquals(responseContext.getRestEntityContexts().size(), 1);
+//        assertEquals(responseContext.getRestEntityContexts().get(0).getRestEntities().size(), 14); // client + server
+//        assertEquals(responseContext.getRestFlowContext().getRestFlows().size(), 8);
+//
+//        int countEndpoints = 0;
+//
+//        for (RestEntity restEntity : responseContext.getRestEntityContexts().get(0).getRestEntities()) {
+//            for (RestEntity expectedRestEndpoint : expectedRestEndpoints) {
+//                if (restEntity.getMethodName().equals(expectedRestEndpoint.getMethodName())) {
+//                    assertEquals(restEntity.getHttpMethod(), expectedRestEndpoint.getHttpMethod());
+//                    assertTrue(restEntity.getReturnType().contains(expectedRestEndpoint.getReturnType()));
+//                    assertEquals(restEntity.isClient(), expectedRestEndpoint.isClient());
+//                    countEndpoints++;
+//                }
+//            }
+//        }
+//
+//        assertEquals(countEndpoints, 6);
+//
+//        int countRestCalls = 0;
+//
+//        for (RestEntity restEntity : responseContext.getRestEntityContexts().get(0).getRestEntities()) {
+//            for (RestEntity expectedRestCalls : expectedRestCalls) {
+//                if (restEntity.getMethodName().equals(expectedRestCalls.getMethodName())) {
+//                    assertEquals(restEntity.getHttpMethod(), expectedRestCalls.getHttpMethod());
+//                    assertTrue(restEntity.getReturnType().contains(expectedRestCalls.getReturnType()));
+//                    assertEquals(restEntity.isClient(), expectedRestCalls.isClient());
+//                    countRestCalls++;
+//                }
+//            }
+//        }
+//
+//        assertEquals(countRestCalls, 8);
+//    }
 }
