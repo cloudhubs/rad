@@ -17,7 +17,8 @@
         <dependency>
             <groupId>edu.baylor.ecs.cloudhubs</groupId>
             <artifactId>rad</artifactId>
-            <version>${project.version}</version>
+            <version>0.0.5</version>
+            <!-- <version>${project.version}</version> -->
         </dependency>
 
         <dependency>
